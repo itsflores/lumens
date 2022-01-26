@@ -1,23 +1,20 @@
 const WebSocketServer = require("ws").Server;
 const PORT = process.env.PORT || 8081;
-const wss = new WebSocketServer({ port: PORT });
-let client = null; // client variable
+const wss = new WebSocketServer({
+  port: PORT
+});
 
-const handleConnection = (client, request) => {
-  console.log("New Connection");
-  client = client;
+const handleConnection = (client) => {
+  console.log("Connected!");
 
-  function endClient() {
-    client = null;
-    console.log("connection closed");
-  }
-
-  function clientResponse(data) {
+  client.on("message", (data) => {
     console.log(JSON.parse(data));
-  }
+  });
 
-  client.on("message", clientResponse);
-  client.on("close", endClient);
+  client.on("close", () => {
+    client = null;
+    console.log("Connection lost");
+  });
 };
 
 // listen for clients and handle them:

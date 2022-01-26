@@ -24,7 +24,7 @@ void ofApp::setup(){
     HTTPResponse response;
     
     WebSocket* m_psock = new WebSocket(cs, request, response);
-    char const *testStr="{'test':'test'}";
+    char const *testStr="test";
     char receiveBuff[256];
 
     int len=m_psock->sendFrame(testStr,strlen(testStr),WebSocket::FRAME_TEXT);
