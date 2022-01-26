@@ -30,18 +30,10 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 
-//    ofxLibwebsockets::Client client;
-
-//    void onConnect( ofxLibwebsockets::Event& args );
-//    void onOpen( ofxLibwebsockets::Event& args );
-//    void onClose( ofxLibwebsockets::Event& args );
-//    void onIdle( ofxLibwebsockets::Event& args );
-//    void onMessage( ofxLibwebsockets::Event& args );
-//    void onBroadcast( ofxLibwebsockets::Event& args );
-    
     Poco::Net::WebSocket* m_psock;
     
     void drawPointCloud();
+    void sendCloud();
     
     ofxKinect kinect;
     int angle;
@@ -49,6 +41,4 @@ class ofApp : public ofBaseApp{
     int farClip, nearClip;
     
     ofEasyCam cam;
-    
-    
 };

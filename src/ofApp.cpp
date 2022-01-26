@@ -22,19 +22,7 @@ void ofApp::setup(){
     request.set("origin", "/");
     HTTPResponse response;
     
-    WebSocket* m_psock = new WebSocket(cs, request, response);
-    char const *testStr="test";
-    char receiveBuff[256];
-    
-    int len=m_psock->sendFrame(testStr,strlen(testStr),WebSocket::FRAME_TEXT);
-    std::cout << "Sent bytes " << len << std::endl;
-    int flags=0;
-    
-    int rlen=m_psock->receiveFrame(receiveBuff,256,flags);
-    std::cout << "Received bytes " << rlen << std::endl;
-    std::cout << receiveBuff << std::endl;
-
-    m_psock->close();
+    m_psock = new WebSocket(cs, request, response);
 }
 
 //--------------------------------------------------------------
@@ -47,18 +35,19 @@ void ofApp::draw(){
     if (debugMode) {
         cam.begin();
         drawPointCloud();
+//        sendCloud();
         cam.end();
     } else {
         kinect.draw(0, 0, kinect.width/2, kinect.height/2);
         kinect.drawDepth(kinect.width/2, 0, kinect.width/2, kinect.height/2);
     }
-
 }
 
 //--------------------------------------------------------------
 void ofApp::exit(){
     kinect.setCameraTiltAngle(0);
     kinect.close();
+    m_psock->close();
 }
 
 //--------------------------------------------------------------
@@ -75,21 +64,19 @@ void ofApp::keyPressed(int key){
         case OF_KEY_DOWN:
             angle--;
             break;
+            
+        case 'p':
+            debugMode = !debugMode;
+            break;
+        
+        case 't':
+            sendCloud();
 
         default:
             break;
     }
 
     kinect.setCameraTiltAngle(angle);
-    
-    switch (key) {
-        case 'p':
-            debugMode = !debugMode;
-            break;
-            
-        default:
-            break;
-    }
 }
 
 //--------------------------------------------------------------
@@ -155,8 +142,6 @@ void ofApp::drawPointCloud() {
             
             if (point.z > nearClip && point.z < farClip) {
                 pointCloud.addVertex(point);
-                //            pointCloud.addColor(kinect.getColorAt(x, y));
-
 //                ofColor col;
                 // ofMap scale distance to a new range
 //                col.setHsb(ofMap(point.z, 100, 8000, 0, 255), 255, 255);
@@ -178,4 +163,19 @@ void ofApp::drawPointCloud() {
     ofPopMatrix();
     
     ofDisableDepthTest();
+}
+
+void ofApp::sendCloud() {
+    ofMesh pointCloud;
+    
+    char const *testStr="test";
+    char receiveBuff[256];
+    
+    int len=m_psock->sendFrame(testStr, strlen(testStr), WebSocket::FRAME_TEXT);
+    std::cout << "Sent bytes " << len << std::endl;
+    int flags=0;
+    
+    int rlen=m_psock->receiveFrame(receiveBuff, 256, flags);
+    std::cout << "Received bytes " << rlen << std::endl;
+    std::cout << receiveBuff << std::endl;
 }
