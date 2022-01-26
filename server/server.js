@@ -16,7 +16,8 @@ const handleConnection = (client) => {
     console.log("Connection lost");
   });
 
-  client.send("hello!");
+  // reply
+  // client.send("hello!");
 };
 
 // listen for clients and handle them:
