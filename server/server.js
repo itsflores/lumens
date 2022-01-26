@@ -1,7 +1,7 @@
 const WebSocketServer = require("ws").Server;
 const PORT = process.env.PORT || 8081;
 const wss = new WebSocketServer({
-  port: PORT
+  port: PORT,
 });
 
 const handleConnection = (client) => {
@@ -16,7 +16,7 @@ const handleConnection = (client) => {
     console.log("Connection lost");
   });
 
-  client.send('hello!');
+  client.send("hello!");
 };
 
 // listen for clients and handle them:
