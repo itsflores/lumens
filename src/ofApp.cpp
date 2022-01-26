@@ -16,8 +16,7 @@ void ofApp::setup(){
     nearClip = 500;
     farClip = 2000;
     
-    // sockets ws
-    // client.connect("localhost", 8081);
+    // sockets
     HTTPClientSession cs("localhost",8081);
     HTTPRequest request(HTTPRequest::HTTP_GET, "/?encoding=text",HTTPMessage::HTTP_1_1);
     request.set("origin", "/");
@@ -26,11 +25,11 @@ void ofApp::setup(){
     WebSocket* m_psock = new WebSocket(cs, request, response);
     char const *testStr="test";
     char receiveBuff[256];
-
+    
     int len=m_psock->sendFrame(testStr,strlen(testStr),WebSocket::FRAME_TEXT);
     std::cout << "Sent bytes " << len << std::endl;
     int flags=0;
-
+    
     int rlen=m_psock->receiveFrame(receiveBuff,256,flags);
     std::cout << "Received bytes " << rlen << std::endl;
     std::cout << receiveBuff << std::endl;

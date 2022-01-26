@@ -8,13 +8,15 @@ const handleConnection = (client) => {
   console.log("Connected!");
 
   client.on("message", (data) => {
-    console.log(JSON.parse(data));
+    // console.log(JSON.parse(data));
+    console.log('data');
   });
 
   client.on("close", () => {
-    client = null;
     console.log("Connection lost");
   });
+
+  client.send('hello!');
 };
 
 // listen for clients and handle them:

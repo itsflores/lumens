@@ -2,7 +2,6 @@
 
 #include "ofMain.h"
 #include "ofxKinect.h"
-//#include "ofxLibwebsockets.h"
 #include <Poco/Net/WebSocket.h>
 #include <Poco/Net/HTTPRequest.h>
 #include <Poco/Net/HTTPResponse.h>
