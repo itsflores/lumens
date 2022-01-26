@@ -18,7 +18,7 @@ void ofApp::setup(){
     
     // sockets
     HTTPClientSession cs("localhost",8081);
-    HTTPRequest request(HTTPRequest::HTTP_GET, "/?encoding=text",HTTPMessage::HTTP_1_1);
+    HTTPRequest request(HTTPRequest::HTTP_GET, "/?encoding=application/json",HTTPMessage::HTTP_1_1);
     request.set("origin", "/");
     HTTPResponse response;
     
@@ -131,11 +131,12 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 void ofApp::drawPointCloud() {
     ofMesh pointCloud;
+    std::vector<string> localPoints;
     
     pointCloud.setMode(OF_PRIMITIVE_POINTS);
     
-    for (int y = 0; y < kinect.height; y++) {
-        for (int x = 0; x < kinect.width; x++) {
+    for (int x = 0; x < kinect.width; x++) {
+        for (int y = 0; y < kinect.height; y++) {
             ofVec3f point;
             
             point = kinect.getWorldCoordinateAt(x, y);
@@ -151,31 +152,39 @@ void ofApp::drawPointCloud() {
     }
     
     glPointSize(2);
-    
     ofEnableDepthTest();
-    
     ofPushMatrix();
-    
     ofScale(1, -1, 1);
     ofTranslate(0, 0, -1000);
+    
     pointCloud.drawVertices();
     
-    ofPopMatrix();
+    // TODO need to put this on a timer
+//    for (ofVec3f point : pointCloud.getVertices()) {
+//        std::string pointText = std::to_string(point.x) + ":" + std::to_string(point.y) + ":" + std::to_string(point.z);
+//        localPoints.push_back(pointText);
+//
+//        std::cout << pointText;
+//    }
+//
+//    localPoints.clear();
     
+    ofPopMatrix();
     ofDisableDepthTest();
 }
 
 void ofApp::sendCloud() {
     ofMesh pointCloud;
     
-    char const *testStr="test";
-    char receiveBuff[256];
+    char const *testStr="{\"hi\":\"test\"}";
     
-    int len=m_psock->sendFrame(testStr, strlen(testStr), WebSocket::FRAME_TEXT);
-    std::cout << "Sent bytes " << len << std::endl;
-    int flags=0;
+    m_psock->sendFrame(testStr, strlen(testStr), WebSocket::FRAME_TEXT);
+    std::cout << "sent!" << std::endl;
     
-    int rlen=m_psock->receiveFrame(receiveBuff, 256, flags);
-    std::cout << "Received bytes " << rlen << std::endl;
-    std::cout << receiveBuff << std::endl;
+    // receive code NOT NEEDED
+//    char receiveBuff[256];
+//    int flags=0;
+//    m_psock->receiveFrame(receiveBuff, 256, flags);
+//    std::cout << "received!" << std::endl;
+//    std::cout << receiveBuff << std::endl;
 }

@@ -8,6 +8,7 @@
 #include <Poco/Net/HTTPMessage.h>
 #include <Poco/Net/WebSocket.h>
 #include <Poco/Net/HTTPClientSession.h>
+#include <vector>
 
 class ofApp : public ofBaseApp{
 
@@ -39,6 +40,8 @@ class ofApp : public ofBaseApp{
     int angle;
     bool debugMode;
     int farClip, nearClip;
+//    std::string pointCloudArray[480][640];
+    std::vector<string> pointCloudVector;
     
     ofEasyCam cam;
 };
