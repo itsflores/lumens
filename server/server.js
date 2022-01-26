@@ -1,10 +1,9 @@
-var WebSocketServer = require("ws").Server;
-
-const wssPort = process.env.PORT || 8081;
-const wss = new WebSocketServer({ port: wssPort });
+const WebSocketServer = require("ws").Server;
+const PORT = process.env.PORT || 8081;
+const wss = new WebSocketServer({ port: PORT });
 let client = null; // client variable
 
-function handleConnection(client, request) {
+const handleConnection = (client, request) => {
   console.log("New Connection");
   client = client;
 
@@ -19,7 +18,8 @@ function handleConnection(client, request) {
 
   client.on("message", clientResponse);
   client.on("close", endClient);
-}
+};
 
 // listen for clients and handle them:
 wss.on("connection", handleConnection);
+console.log(`Websockets listening on port ${PORT}`);
