@@ -26,7 +26,6 @@ void ofApp::setup(){
     HTTPRequest request(HTTPRequest::HTTP_GET, "/?encoding=text",HTTPMessage::HTTP_1_1);
     request.set("origin", "/");
     HTTPResponse response;
-    
     m_psock = new WebSocket(cs, request, response);
     
     std::thread backgroundThread(
@@ -50,7 +49,6 @@ void ofApp::draw(){
     if (debugMode) {
         cam.begin();
         drawPointCloud();
-//        sendCloud();
         cam.end();
     } else {
         kinect.draw(0, 0, kinect.width/2, kinect.height/2);
@@ -177,11 +175,15 @@ void ofApp::sendCloud() {
     // Creates vector of "x:y:z" strings
     if (pointCloud.hasVertices()) {
         for (ofVec3f point : pointCloud.getVertices()) {
-            std::string pointText = std::to_string(point.x)
+            int xInt = static_cast<int>(point.x);
+            int yInt = static_cast<int>(point.y);
+            int zInt = static_cast<int>(point.z);
+            
+            std::string pointText = std::to_string(xInt)
                 + ":"
-                + std::to_string(point.y)
+                + std::to_string(yInt)
                 + ":"
-                + std::to_string(point.z);
+                + std::to_string(zInt);
             
             localPoints.push_back(pointText);
         }
@@ -206,11 +208,6 @@ void ofApp::sendCloud() {
     }
 
     localPoints.clear();
-
-//    char const *testStr = "{\"hi\":\"test\"}";
-//
-//    m_psock->sendFrame(testStr, strlen(testStr), WebSocket::FRAME_TEXT);
-//    std::cout << "sent!" << std::endl;
     
     // receive code NOT NEEDED
 //    char receiveBuff[256];
