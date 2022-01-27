@@ -42,7 +42,6 @@ class ofApp : public ofBaseApp{
     int angle;
     bool debugMode;
     int farClip, nearClip;
-    std::vector<string> pointCloudStrings;
     
     ofEasyCam cam;
 };
