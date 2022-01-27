@@ -1,5 +1,4 @@
 #include "ofApp.h"
-#include <thread>
 
 using Poco::Net::HTTPClientSession;
 using Poco::Net::HTTPRequest;
@@ -24,7 +23,7 @@ void ofApp::setup(){
     
     // sockets
     HTTPClientSession cs("localhost",8081);
-    HTTPRequest request(HTTPRequest::HTTP_GET, "/?encoding=application/json",HTTPMessage::HTTP_1_1);
+    HTTPRequest request(HTTPRequest::HTTP_GET, "/?encoding=text",HTTPMessage::HTTP_1_1);
     request.set("origin", "/");
     HTTPResponse response;
     
@@ -84,9 +83,6 @@ void ofApp::keyPressed(int key){
         case 'p':
             debugMode = !debugMode;
             break;
-        
-        case 't':
-            sendCloud();
 
         default:
             break;
@@ -156,8 +152,8 @@ void ofApp::drawPointCloud() {
             
             if (point.z > nearClip && point.z < farClip) {
                 pointCloud.addVertex(point);
+                
 //                ofColor col;
-                // ofMap scale distance to a new range
 //                col.setHsb(ofMap(point.z, 100, 8000, 0, 255), 255, 255);
 //                pointCloud.addColor(col);
             }
@@ -178,22 +174,43 @@ void ofApp::drawPointCloud() {
 void ofApp::sendCloud() {
     std::vector<string> localPoints;
     
-    char const *testStr="{\"hi\":\"test\"}";
-    
-    m_psock->sendFrame(testStr, strlen(testStr), WebSocket::FRAME_TEXT);
-    std::cout << "sent!" << std::endl;
-    
     // Creates vector of "x:y:z" strings
     if (pointCloud.hasVertices()) {
         for (ofVec3f point : pointCloud.getVertices()) {
-            std::string pointText = std::to_string(point.x) + ":" + std::to_string(point.y) + ":" + std::to_string(point.z);
+            std::string pointText = std::to_string(point.x)
+                + ":"
+                + std::to_string(point.y)
+                + ":"
+                + std::to_string(point.z);
+            
             localPoints.push_back(pointText);
         }
 
-        std::cout << localPoints[0] << std::endl;
+//        std::cout << localPoints[0] << std::endl;
+        
+        const char* const delim = ",";
+
+        std::ostringstream pointStream;
+        std::copy(localPoints.begin(), localPoints.end(),
+                  std::ostream_iterator<std::string>(pointStream, delim));
+        
+//        std::cout << pointsString.str() << std::endl;
+        
+        std::string pointString = pointStream.str();
+        
+        char *message = new char[pointString.length() + 1];
+        std::copy(pointString.c_str(), pointString.c_str() + pointString.length() + 1, message);
+        
+        m_psock->sendFrame(message, strlen(message), WebSocket::FRAME_TEXT);
+        std::cout << "sent!" << std::endl;
     }
 
     localPoints.clear();
+
+//    char const *testStr = "{\"hi\":\"test\"}";
+//
+//    m_psock->sendFrame(testStr, strlen(testStr), WebSocket::FRAME_TEXT);
+//    std::cout << "sent!" << std::endl;
     
     // receive code NOT NEEDED
 //    char receiveBuff[256];
