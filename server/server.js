@@ -8,7 +8,6 @@ const handleConnection = (client) => {
   console.log("Connected!");
 
   client.on("message", (data) => {
-    // console.log(JSON.parse(data));
     console.log(data.toString());
   });
 
