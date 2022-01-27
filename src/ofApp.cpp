@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include <thread>
 
 using Poco::Net::HTTPClientSession;
 using Poco::Net::HTTPRequest;
@@ -12,9 +13,14 @@ void ofApp::setup(){
     kinect.init();
     kinect.open();
     debugMode = false;
+    
     // milimeters
     nearClip = 500;
     farClip = 2000;
+    
+    // cloud
+    pointCloud.setMode(OF_PRIMITIVE_POINTS);
+    glPointSize(2);
     
     // sockets
     HTTPClientSession cs("localhost",8081);
@@ -23,6 +29,16 @@ void ofApp::setup(){
     HTTPResponse response;
     
     m_psock = new WebSocket(cs, request, response);
+    
+    std::thread backgroundThread(
+      [this]() -> void {
+        while(true) {
+          this->sendCloud();
+          this_thread::sleep_for(chrono::milliseconds(3000));
+        }
+      }
+    );
+    backgroundThread.detach();
 }
 
 //--------------------------------------------------------------
@@ -130,10 +146,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 void ofApp::drawPointCloud() {
-    ofMesh pointCloud;
-    std::vector<string> localPoints;
-    
-    pointCloud.setMode(OF_PRIMITIVE_POINTS);
+    pointCloud.clear();
     
     for (int x = 0; x < kinect.width; x++) {
         for (int y = 0; y < kinect.height; y++) {
@@ -151,7 +164,6 @@ void ofApp::drawPointCloud() {
         }
     }
     
-    glPointSize(2);
     ofEnableDepthTest();
     ofPushMatrix();
     ofScale(1, -1, 1);
@@ -159,27 +171,29 @@ void ofApp::drawPointCloud() {
     
     pointCloud.drawVertices();
     
-    // TODO need to put this on a timer
-//    for (ofVec3f point : pointCloud.getVertices()) {
-//        std::string pointText = std::to_string(point.x) + ":" + std::to_string(point.y) + ":" + std::to_string(point.z);
-//        localPoints.push_back(pointText);
-//
-//        std::cout << pointText;
-//    }
-//
-//    localPoints.clear();
-    
     ofPopMatrix();
     ofDisableDepthTest();
 }
 
 void ofApp::sendCloud() {
-    ofMesh pointCloud;
+    std::vector<string> localPoints;
     
     char const *testStr="{\"hi\":\"test\"}";
     
     m_psock->sendFrame(testStr, strlen(testStr), WebSocket::FRAME_TEXT);
     std::cout << "sent!" << std::endl;
+    
+    // Creates vector of "x:y:z" strings
+    if (pointCloud.hasVertices()) {
+        for (ofVec3f point : pointCloud.getVertices()) {
+            std::string pointText = std::to_string(point.x) + ":" + std::to_string(point.y) + ":" + std::to_string(point.z);
+            localPoints.push_back(pointText);
+        }
+
+        std::cout << localPoints[0] << std::endl;
+    }
+
+    localPoints.clear();
     
     // receive code NOT NEEDED
 //    char receiveBuff[256];

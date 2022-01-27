@@ -36,6 +36,8 @@ class ofApp : public ofBaseApp{
     void drawPointCloud();
     void sendCloud();
     
+    ofMesh pointCloud;
+    
     ofxKinect kinect;
     int angle;
     bool debugMode;
