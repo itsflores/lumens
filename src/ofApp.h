@@ -30,18 +30,17 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
-
-    Poco::Net::WebSocket* m_psock;
     
     void drawPointCloud();
     void sendCloud();
     
-    ofMesh pointCloud;
-    
-    ofxKinect kinect;
+    bool debugMode, emit;
     int angle;
-    bool debugMode;
     int farClip, nearClip;
     
+    ofMesh pointCloud;
+    ofxKinect kinect;
     ofEasyCam cam;
+    
+    Poco::Net::WebSocket* m_psock;
 };

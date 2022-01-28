@@ -12,6 +12,7 @@ void ofApp::setup(){
     kinect.init();
     kinect.open();
     debugMode = false;
+    emit = false;
     
     // milimeters
     nearClip = 500;
@@ -30,13 +31,14 @@ void ofApp::setup(){
     m_psock = new WebSocket(cs, request, response);
     
     std::thread backgroundThread(
-      [this]() -> void {
+    [this]() -> void {
         while(true) {
-          this->sendCloud();
-          this_thread::sleep_for(chrono::milliseconds(3000));
+            if (emit) {
+                this->sendCloud();
+            }
+            this_thread::sleep_for(chrono::milliseconds(3000));
         }
-      }
-    );
+    });
     backgroundThread.detach();
 }
 
@@ -81,6 +83,14 @@ void ofApp::keyPressed(int key){
             
         case 'p':
             debugMode = !debugMode;
+            break;
+            
+        case 'a':
+            emit = !emit;
+            break;
+            
+        case 's':
+            sendCloud();
             break;
 
         default:
