@@ -15,11 +15,14 @@ void ofApp::setup(){
     
     // milimeters
     nearClip = 500;
-    farClip = 2000;
+//    farClip = 1500;
+    // close
+    farClip = 700;
     
     // cloud
     pointCloud.setMode(OF_PRIMITIVE_POINTS);
-    glPointSize(2);
+    glPointSize(10);
+    glEnable(GL_POINT_SMOOTH);
     
     // sockets
     HTTPClientSession cs("localhost",8081);
@@ -141,9 +144,10 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 void ofApp::drawPointCloud() {
     pointCloud.clear();
+    int step = 10;
     
-    for (int x = 0; x < kinect.width; x++) {
-        for (int y = 0; y < kinect.height; y++) {
+    for (int x = 0; x < kinect.width; x += step) {
+        for (int y = 0; y < kinect.height; y+= step) {
             ofVec3f point;
             
             point = kinect.getWorldCoordinateAt(x, y);
@@ -171,6 +175,9 @@ void ofApp::drawPointCloud() {
 
 void ofApp::sendCloud() {
     std::vector<string> localPoints;
+    std::string pointString = "";
+    std::ostringstream pointStream;
+    const char* const delim = ",";
     
     // Creates vector of "x:y:z" strings
     if (pointCloud.hasVertices()) {
@@ -187,25 +194,20 @@ void ofApp::sendCloud() {
             
             localPoints.push_back(pointText);
         }
-
 //        std::cout << localPoints[0] << std::endl;
-        
-        const char* const delim = ",";
-
-        std::ostringstream pointStream;
-        std::copy(localPoints.begin(), localPoints.end(),
-                  std::ostream_iterator<std::string>(pointStream, delim));
-        
-//        std::cout << pointsString.str() << std::endl;
-        
-        std::string pointString = pointStream.str();
-        
-        char *message = new char[pointString.length() + 1];
-        std::copy(pointString.c_str(), pointString.c_str() + pointString.length() + 1, message);
-        
-        m_psock->sendFrame(message, strlen(message), WebSocket::FRAME_TEXT);
-        std::cout << "sent!" << std::endl;
     }
+    
+    std::copy(localPoints.begin(), localPoints.end(),
+              std::ostream_iterator<std::string>(pointStream, delim));
+    
+    pointString = pointStream.str();
+    
+    char *message = new char[pointString.length() + 1];
+    
+    std::copy(pointString.c_str(), pointString.c_str() + pointString.length() + 1, message);
+   
+    m_psock->sendFrame(message, strlen(message), WebSocket::FRAME_TEXT);
+    std::cout << "sent!" << std::endl;
 
     localPoints.clear();
     
