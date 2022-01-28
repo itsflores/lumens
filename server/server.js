@@ -24,7 +24,10 @@ const handleConnection = (client) => {
     });
 
     console.log("data length: ", positionData.length);
-    console.log(positionData.slice(0, 5));
+    // console.log(positionData.slice(0, 5));
+    if (positionData.length > 0) {
+      drawMesh(positionData);
+    }
   });
 
   client.on("close", () => {
@@ -35,20 +38,30 @@ const handleConnection = (client) => {
   // client.send("hello!");
 };
 
-const drawMesh = () => {
+const drawMesh = (data) => {
   const rows = 48;
   const columns = 80;
 
-  const mesh = Array.from(Array(rows).keys()).fill(
-    Array.from(Array(columns).keys()).fill(".")
-  );
-  const stringMesh = mesh.map((row) => row.join("")).join("\n");
+  const { x, y } = data[0];
 
-  console.log(stringMesh);
+  console.log(x);
+  console.log(y);
+
+  // const mesh = Array.from(Array(rows).keys()).fill(
+  //   Array.from(Array(columns).keys()).fill(".")
+  // );
+
+  // data.forEach((point) => {
+  //   const x = (point.x / 10) * -1;
+  //   const y = point.y / 10;
+
+  //   mesh[x][y] = "Q";
+  // });
+
+  // const stringMesh = mesh.map((row) => row.join("")).join("\n");
+  // console.log(stringMesh);
   // fs.writeFileSync('test.txt', mesh);
 };
-
-drawMesh();
 
 // listen for clients and handle them:
 wss.on("connection", handleConnection);
