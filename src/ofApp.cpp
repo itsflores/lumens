@@ -85,7 +85,7 @@ void ofApp::keyPressed(int key){
             debugMode = !debugMode;
             break;
             
-        case 'a':
+        case 'e':
             emit = !emit;
             break;
             
