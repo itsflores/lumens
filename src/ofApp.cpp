@@ -15,9 +15,7 @@ void ofApp::setup(){
     
     // milimeters
     nearClip = 500;
-//    farClip = 1500;
-    // close
-    farClip = 700;
+    farClip = 800;
     
     // cloud
     pointCloud.setMode(OF_PRIMITIVE_POINTS);
@@ -143,6 +141,7 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 void ofApp::drawPointCloud() {
+//    vector<string> tempPoints;
     pointCloud.clear();
     int step = 10;
     
@@ -154,6 +153,7 @@ void ofApp::drawPointCloud() {
             
             if (point.z > nearClip && point.z < farClip) {
                 pointCloud.addVertex(point);
+//                tempPoints.push_back(to_string(x) + ":" + to_string(y) + ":" + to_string(kinect.getDistanceAt(x, y)));
                 
 //                ofColor col;
 //                col.setHsb(ofMap(point.z, 100, 8000, 0, 255), 255, 255);
@@ -161,6 +161,10 @@ void ofApp::drawPointCloud() {
             }
         }
     }
+    
+//    for(string p : tempPoints) {
+//        cout << p << endl;
+//    }
     
     ofEnableDepthTest();
     ofPushMatrix();

@@ -26,42 +26,38 @@ const handleConnection = (client) => {
     console.log("data length: ", positionData.length);
     // console.log(positionData.slice(0, 5));
     if (positionData.length > 0) {
-      drawMesh(positionData);
+      drawStringMesh(positionData);
     }
   });
 
   client.on("close", () => {
     console.log("Connection lost");
   });
-
-  // reply
-  // client.send("hello!");
 };
 
-const drawMesh = (data) => {
-  const rows = 48;
-  const columns = 80;
+const drawStringMesh = (data) => {
+  const rows = 30;
+  const columns = 30;
 
-  const { x, y } = data[0];
+  let mesh = Array.from(Array(rows), () => new Array(columns).fill("."));
 
-  console.log(x);
-  console.log(y);
+  console.log(mesh);
 
-  // const mesh = Array.from(Array(rows).keys()).fill(
-  //   Array.from(Array(columns).keys()).fill(".")
-  // );
+  data.forEach((point) => {
+    const x = Math.round(point.x / 10 + rows / 2);
+    const y = Math.round((point.y / 10) * -1 + columns / 2);
 
-  // data.forEach((point) => {
-  //   const x = (point.x / 10) * -1;
-  //   const y = point.y / 10;
+    if (x > 0 && x < 30 && y > 0 && y < 30) {
+      mesh[y][x] = "G";
+    }
+  });
 
-  //   mesh[x][y] = "Q";
-  // });
-
-  // const stringMesh = mesh.map((row) => row.join("")).join("\n");
-  // console.log(stringMesh);
+  const stringMesh = mesh.map((row) => row.join("")).join("\n");
+  console.log(stringMesh);
   // fs.writeFileSync('test.txt', mesh);
 };
+
+// drawStringMesh([]);
 
 // listen for clients and handle them:
 wss.on("connection", handleConnection);
