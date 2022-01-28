@@ -36,23 +36,26 @@ const handleConnection = (client) => {
 };
 
 const drawStringMesh = (data) => {
-  const rows = 30;
-  const columns = 30;
+  const xSize = 60;
+  const ySize = 40;
 
-  let mesh = Array.from(Array(rows), () => new Array(columns).fill("."));
+  let mesh = Array.from(Array(xSize), () => new Array(ySize).fill("."));
 
   console.log(mesh);
 
   data.forEach((point) => {
-    const x = Math.round(point.x / 10 + rows / 2);
-    const y = Math.round((point.y / 10) * -1 + columns / 2);
+    const x = Math.round(point.x / 10 + xSize / 2);
+    const y = Math.round((point.y / 10) * -1 + ySize / 2);
 
-    if (x > 0 && x < 30 && y > 0 && y < 30) {
-      mesh[y][x] = "G";
+    if (x > 0 && x < ySize && y > 0 && y < xSize) {
+      mesh[x][y] = "G";
     }
   });
 
-  const stringMesh = mesh.map((row) => row.join("")).join("\n");
+  const stringMesh = mesh
+    .map((row) => row.join(""))
+    .reverse()
+    .join("\n");
   console.log(stringMesh);
   // fs.writeFileSync('test.txt', mesh);
 };
