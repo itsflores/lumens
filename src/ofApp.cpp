@@ -16,7 +16,7 @@ void ofApp::setup(){
     
     // milimeters
     nearClip = 500;
-    farClip = 800;
+    farClip = 1000;
     
     // cloud
     pointCloud.setMode(OF_PRIMITIVE_POINTS);
