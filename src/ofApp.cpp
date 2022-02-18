@@ -11,16 +11,20 @@ void ofApp::setup(){
     kinect.setRegistration(true);
     kinect.init();
     kinect.open();
+    angle = 2;
+    
     debugMode = false;
     emit = false;
     
     // milimeters
     nearClip = 500;
-    farClip = 1000;
+    farClip = 3200;
+//    farClip = 1000;
     
     // cloud
     pointCloud.setMode(OF_PRIMITIVE_POINTS);
     glPointSize(10);
+//    glPointSize(1);
     glEnable(GL_POINT_SMOOTH);
     
     // sockets
@@ -163,11 +167,9 @@ void ofApp::drawPointCloud() {
             
             if (point.z > nearClip && point.z < farClip) {
                 pointCloud.addVertex(point);
-//                tempPoints.push_back(to_string(x) + ":" + to_string(y) + ":" + to_string(kinect.getDistanceAt(x, y)));
-                
-//                ofColor col;
-//                col.setHsb(ofMap(point.z, 100, 8000, 0, 255), 255, 255);
-//                pointCloud.addColor(col);
+                ofColor col;
+                col.setHsb(ofMap(point.z, 100, 8000, 0, 255), 255, 255);
+                pointCloud.addColor(col);
             }
         }
     }
