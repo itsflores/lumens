@@ -14,19 +14,24 @@ Project Lumens is a visual representation of sound and movement. Additionally, i
 
 ## Dependencies
 
-### Movement
+## Movement
 - [OpenFrameworks](https://openframeworks.cc/)
 - [ofxKinect](https://github.com/ofTheo/ofxKinect)
 - [Poco](https://pocoproject.org/)
 
-### Hardware
-- Arduino Uno
-- StandardFirmata protocol (to enable control through NodeJS)
+## Sound TBD
 
-### Sound TBD
-
-### Triangulation
+## Triangulation
 - [Node](https://nodejs.org/en/)
 
 ## Hardware
 - Kinect (Model 1414)
+
+### LEDs
+- Arduino Uno
+- StandardFirmata protocol (to enable control through NodeJS)
+- [johnny-five](https://github.com/rwaldron/johnny-five)
+- [node-pixel](https://github.com/ajfisher/node-pixel)
+
+**Important**
+To use node-pixel on an M1 machine, I had to install `firmata` separately and then force the installation of `node-pixel`
