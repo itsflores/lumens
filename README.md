@@ -25,6 +25,7 @@ Project Lumens is a visual representation of sound and movement. Additionally, i
 - [Node](https://nodejs.org/en/)
 
 ## Hardware
+### Camera
 - Kinect (Model 1414)
 
 ### LEDs
