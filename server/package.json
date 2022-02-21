@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "johnny-five": "^2.1.0",
+    "serialport": "^10.3.0",
+    "sharp": "^0.30.1",
     "ws": "^8.4.2"
   }
 }

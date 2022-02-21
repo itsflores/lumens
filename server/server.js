@@ -1,12 +1,30 @@
 const fs = require("fs");
 const WebSocketServer = require("ws").Server;
+const Light = require("./Light");
 const PORT = process.env.PORT || 8081;
 const wss = new WebSocketServer({
   port: PORT,
 });
 
-const KINECT_WIDTH = 640;
-const KINECT_HEIGHT = 480;
+const lights = [];
+
+const calcDistance = (pointA, pointB) =>
+  Math.hypot(pointB.x - pointA.x, pointB.y - pointA.y, pointB.z - pointA.z);
+
+const populateLights = () => {
+  const num = 8;
+  const between = 200;
+
+  let posX = 0;
+  let posZ = 1500;
+  let posY = 500;
+
+  for (let i = 0; i < num; i++) {
+    const newLight = new Light(posX, posY, posZ);
+    posZ += between;
+    lights.push(newLight);
+  }
+};
 
 const handleConnection = (client) => {
   console.log("Connected!");
@@ -17,16 +35,21 @@ const handleConnection = (client) => {
     const positionData = coordinates.map((coor) => {
       const [x, y, z] = coor.split(":");
       return {
-        x,
-        y,
-        z,
+        x: parseInt(x),
+        y: parseInt(y),
+        z: parseInt(z),
       };
     });
 
+    // console.log(positionData);
     console.log("data length: ", positionData.length);
-    // console.log(positionData.slice(0, 5));
+
     if (positionData.length > 0) {
-      drawStringMesh(positionData);
+      const filteredPoints = positionData.filter(
+        ({ x, y, z }) => x < -600 && y > 0 && z < 3000
+      );
+
+      drawLights(filteredPoints);
     }
   });
 
@@ -35,33 +58,26 @@ const handleConnection = (client) => {
   });
 };
 
-const drawStringMesh = (data) => {
-  const xSize = 60;
-  const ySize = 40;
+const drawLights = (data) => {
+  for (const entry of data) {
+    const { x, y, z } = entry;
 
-  let mesh = Array.from(Array(xSize), () => new Array(ySize).fill("."));
-
-  console.log(mesh);
-
-  data.forEach((point) => {
-    const x = Math.round(point.x / 10 + xSize / 2);
-    const y = Math.round((point.y / 10) * -1 + ySize / 2);
-
-    if (x > 0 && x < ySize && y > 0 && y < xSize) {
-      mesh[x][y] = "G";
+    for (let light of lights) {
+      let delta = calcDistance(entry, light);
+      if (delta < 50) {
+        light.turnOn();
+      } else {
+        light.turnOff();
+      }
     }
-  });
+  }
 
-  const stringMesh = mesh
-    .map((row) => row.join(""))
-    .reverse()
-    .join("\n");
-  console.log(stringMesh);
-  // fs.writeFileSync('test.txt', mesh);
+  for (let light of lights) {
+    light.toString();
+  }
 };
 
-// drawStringMesh([]);
-
-// listen for clients and handle them:
+// listen for clients
+populateLights();
 wss.on("connection", handleConnection);
 console.log(`Websockets listening on port ${PORT}`);

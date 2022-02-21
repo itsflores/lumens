@@ -11,7 +11,7 @@ void ofApp::setup(){
     kinect.setRegistration(true);
     kinect.init();
     kinect.open();
-    angle = 2;
+//    angle = 2;
     
     debugMode = false;
     emit = false;

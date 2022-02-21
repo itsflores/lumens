@@ -1,3 +1,6 @@
+// Units are in millimetres
+const LIGHT_RADIUS = 50;
+
 class Light {
   intensity;
   on;
@@ -11,15 +14,15 @@ class Light {
   note;
   octave;
 
-  constructor(x, y, z, radius = 10, note, octave) {
+  constructor(x, y, z, radius = LIGHT_RADIUS) {
     this.intensity = 0;
     this.on = false;
     this.x = x;
     this.y = y;
     this.z = z;
     this.radius = radius;
-    this.note = note;
-    this.octave = octave;
+    // this.note = note;
+    // this.octave = octave;
   }
 
   setIntensity(intensity) {
@@ -34,7 +37,21 @@ class Light {
     this.on = !this.on;
   }
 
+  turnOn() {
+    this.on = true;
+  }
+
+  turnOff() {
+    this.on = false;
+  }
+
   updateIntensity(x, y, z) {
     // calculations
   }
+
+  toString() {
+    console.log(this.on ? "X" : "O");
+  }
 }
+
+module.exports = Light;

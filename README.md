@@ -19,6 +19,10 @@ Project Lumens is a visual representation of sound and movement. Additionally, i
 - [ofxKinect](https://github.com/ofTheo/ofxKinect)
 - [Poco](https://pocoproject.org/)
 
+### Hardware
+- Arduino Uno
+- StandardFirmata protocol (to enable control through NodeJS)
+
 ### Sound TBD
 
 ### Triangulation
