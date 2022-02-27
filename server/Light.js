@@ -50,7 +50,7 @@ class Light {
   }
 
   toString() {
-    console.log(this.on ? "X" : "O");
+    return this.on ? "on" : "off";
   }
 }
 
