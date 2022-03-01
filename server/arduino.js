@@ -4,10 +4,6 @@ const pixel = require("node-pixel");
 const board = new five.Board({ port: "/dev/cu.usbmodem1301" });
 
 board.on("ready", () => {
-  const led = new five.Led(3);
-  // led.blink(1000);
-  // board.digitalWrite(4, 1900);
-
   const strip = pixel.Strip({
     board,
     contoller: "FIRMATA",

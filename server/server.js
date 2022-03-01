@@ -38,7 +38,10 @@ const populateLights = () => {
 const handleConnection = (client) => {
   console.log("Connected!");
 
+  
   client.on("message", (data) => {
+    let lightOn = false;
+
     const coordinatesString = data.toString();
     const coordinates = coordinatesString.split(",").slice(0, -1);
     const positionData = coordinates.map((coor) => {
@@ -62,11 +65,15 @@ const handleConnection = (client) => {
         let delta = calcDistance(entry, testLight);
 
         if (delta < 200) {
-          testLight.turnOn();
+          lightOn = true;
         }
       }
 
       // drawLights(filteredPoints);
+    }
+
+    if (lightOn) {
+      testLight.turnOn();
     } else {
       testLight.turnOff();
     }
