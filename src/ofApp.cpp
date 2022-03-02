@@ -223,7 +223,7 @@ void ofApp::sendCloud() {
     std::copy(pointString.c_str(), pointString.c_str() + pointString.length() + 1, message);
    
     m_psock->sendFrame(message, strlen(message), WebSocket::FRAME_TEXT);
-    std::cout << "sent!" << std::endl;
+//    std::cout << "sent!" << std::endl;
 
     localPoints.clear();
     
