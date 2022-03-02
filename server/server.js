@@ -12,7 +12,13 @@ const wss = new WebSocketServer({
 
 const lights = [];
 
-const testLight = new Light(-700, 0, 1500);
+const testLights = [
+  new Light(-700, 200, 1500),
+  new Light(-700, 200, 1650),
+  new Light(-700, 200, 1800),
+  new Light(-700, 200, 1950),
+  new Light(-700, 200, 2100),
+];
 let testStrip = null;
 
 const calcDistance = (pointA, pointB) =>
@@ -38,9 +44,8 @@ const populateLights = () => {
 const handleConnection = (client) => {
   console.log("Connected!");
 
-  
   client.on("message", (data) => {
-    let lightOn = false;
+    const lightsOn = [false, false, false, false, false];
 
     const coordinatesString = data.toString();
     const coordinates = coordinatesString.split(",").slice(0, -1);
@@ -53,8 +58,8 @@ const handleConnection = (client) => {
       };
     });
 
-    console.log(positionData);
-    console.log("data length: ", positionData.length);
+    // console.log(positionData);
+    // console.log("data length: ", positionData.length);
 
     if (positionData.length > 0) {
       const filteredPoints = positionData.filter(
@@ -62,59 +67,37 @@ const handleConnection = (client) => {
       );
 
       for (const entry of filteredPoints) {
-        let delta = calcDistance(entry, testLight);
+        for (let i in testLights) {
+          let delta = calcDistance(entry, testLights[i]);
 
-        if (delta < 200) {
-          lightOn = true;
+          if (delta < 100) {
+            lightsOn[i] = true;
+          }
         }
       }
-
-      // drawLights(filteredPoints);
     }
 
-    if (lightOn) {
-      testLight.turnOn();
-    } else {
-      testLight.turnOff();
+    for (let i in testLights) {
+      if (lightsOn[i]) {
+        testLights[i].turnOn();
+      } else {
+        testLights[i].turnOff();
+      }
+
+      if (testLights[i].on) {
+        testStrip.pixel(49 - i * 2).color("#ffffff");
+      } else {
+        testStrip.pixel(49 - i * 2).off();
+      }
     }
 
-    if (testLight.on) {
-      testStrip.color("#fff");
-      testStrip.show();
-    } else {
-      testStrip.off();
-    }
-
-    console.log(`test light is ${testLight.toString()}`);
+    testStrip.show();
+    // console.log(`test light is ${testLight.toString()}`);
   });
 
   client.on("close", () => {
     console.log("Connection lost");
   });
-};
-
-const drawLights = (data) => {
-  for (const entry of data) {
-    const { x, y, z } = entry;
-
-    for (let i in lights) {
-      let delta = calcDistance(entry, lights[i]);
-
-      if (delta < 500) {
-        console.log(delta);
-      }
-
-      if (delta < 100) {
-        lights[i].turnOn();
-      } else {
-        lights[i].turnOff();
-      }
-    }
-  }
-
-  for (let light of lights) {
-    light.toString();
-  }
 };
 
 // listen for clients
@@ -123,11 +106,12 @@ board.on("ready", () => {
   const strip = pixel.Strip({
     board,
     contoller: "FIRMATA",
-    strips: [{ pin: 3, length: 16 }],
+    strips: [{ pin: 3, length: 50 }],
     gamma: 2.8,
   });
 
   strip.on("ready", () => {
+    strip.off();
     testStrip = strip;
   });
 });
