@@ -9,18 +9,21 @@ class Light {
   y;
   z;
 
+  id;
+
   radius;
 
   note;
   octave;
 
-  constructor(x, y, z, radius = LIGHT_RADIUS) {
+  constructor(x, y, z, id, radius = LIGHT_RADIUS) {
     this.intensity = 0;
     this.on = false;
     this.x = x;
     this.y = y;
     this.z = z;
     this.radius = radius;
+    this.id = id;
     // this.note = note;
     // this.octave = octave;
   }

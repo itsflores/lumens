@@ -4,13 +4,44 @@ const WebSocketServer = require("ws").Server;
 const Light = require("./Light");
 const PORT = process.env.PORT || 8081;
 
-const board = new five.Board({ port: "/dev/cu.usbmodem1301" });
+const board = new five.Board({ port: "/dev/cu.usbmodem11401" });
 
 const wss = new WebSocketServer({
   port: PORT,
 });
 
 const lights = [];
+
+const Z_DELTA = 150;
+const Y_DELTA = 150;
+
+const populateLights = () => {
+  let xPos = -700;
+  let zPos = 1500;
+  let yPos = 200;
+
+  for (let i = 0; i < 5; i++) {
+    zPos = 1500;
+
+    const row = [];
+    const isEven = i % 2 === 0;
+
+    for (let j = 0; j < 5; j++) {
+      const newId = isEven ? 2 * j + 10 * i : 10 * (i + 1) - 2 * (j + 1);
+
+      const newLight = new Light(xPos, yPos, zPos, newId);
+
+      row.push(newLight);
+
+      // console.log(newLight);
+
+      zPos += Z_DELTA;
+    }
+    yPos -= Y_DELTA;
+
+    lights.push(row);
+  }
+};
 
 const testLights = [
   new Light(-700, 200, 1500),
@@ -26,26 +57,14 @@ const calcDistance = (pointA, pointB) =>
     Math.hypot(pointB.x - pointA.x, pointB.y - pointA.y, pointB.z - pointA.z)
   );
 
-const populateLights = () => {
-  const num = 8;
-  const between = 200;
-
-  let posX = -610;
-  let posZ = 1500;
-  let posY = 500;
-
-  for (let i = 0; i < num; i++) {
-    const newLight = new Light(posX, posY, posZ);
-    posZ += between;
-    lights.push(newLight);
-  }
-};
-
 const handleConnection = (client) => {
   console.log("Connected!");
 
   client.on("message", (data) => {
-    const lightsOn = [false, false, false, false, false];
+    // const lightsOn = [false, false, false, false, false];
+    const lightsOn = Array(5)
+      .fill(null)
+      .map(() => Array(5).fill(false));
 
     const coordinatesString = data.toString();
     const coordinates = coordinatesString.split(",").slice(0, -1);
@@ -67,32 +86,39 @@ const handleConnection = (client) => {
       );
 
       for (const entry of filteredPoints) {
-        for (let i in testLights) {
-          let delta = calcDistance(entry, testLights[i]);
+        for (let row = 0; row < 5; row++) {
+          for (let col = 0; col < 5; col++) {
+            let delta = calcDistance(entry, lights[row][col]);
 
-          if (delta < 100) {
-            lightsOn[i] = true;
+            if (delta < 100) {
+              lightsOn[row][col] = true;
+            }
           }
         }
       }
-    }
 
-    for (let i in testLights) {
-      if (lightsOn[i]) {
-        testLights[i].turnOn();
-      } else {
-        testLights[i].turnOff();
+      // console.log(lightsOn);
+
+      for (let row = 0; row < 5; row++) {
+        for (let col = 0; col < 5; col++) {
+          const currLight = lights[row][col];
+
+          if (lightsOn[row][col]) {
+            currLight.turnOn();
+          } else {
+            currLight.turnOff();
+          }
+
+          if (currLight.on) {
+            // console.log(`led: ${49 - currLight.id}`);
+            testStrip.pixel(49 - currLight.id).color("#ffffff");
+          } else {
+            testStrip.pixel(49 - currLight.id).off();
+          }
+        }
       }
-
-      if (testLights[i].on) {
-        testStrip.pixel(49 - i * 2).color("#ffffff");
-      } else {
-        testStrip.pixel(49 - i * 2).off();
-      }
+      testStrip.show();
     }
-
-    testStrip.show();
-    // console.log(`test light is ${testLight.toString()}`);
   });
 
   client.on("close", () => {
