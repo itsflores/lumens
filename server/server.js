@@ -33,8 +33,6 @@ const populateLights = () => {
 
       row.push(newLight);
 
-      // console.log(newLight);
-
       zPos += Z_DELTA;
     }
     yPos -= Y_DELTA;
@@ -97,8 +95,6 @@ const handleConnection = (client) => {
         }
       }
 
-      // console.log(lightsOn);
-
       for (let row = 0; row < 5; row++) {
         for (let col = 0; col < 5; col++) {
           const currLight = lights[row][col];
@@ -110,7 +106,6 @@ const handleConnection = (client) => {
           }
 
           if (currLight.on) {
-            // console.log(`led: ${49 - currLight.id}`);
             testStrip.pixel(49 - currLight.id).color("#ffffff");
           } else {
             testStrip.pixel(49 - currLight.id).off();
