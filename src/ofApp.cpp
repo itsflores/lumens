@@ -40,7 +40,7 @@ void ofApp::setup(){
             if (emit) {
                 this->sendCloud();
             }
-            this_thread::sleep_for(chrono::milliseconds(500));
+            this_thread::sleep_for(chrono::milliseconds(300));
         }
     });
     backgroundThread.detach();
@@ -167,9 +167,9 @@ void ofApp::drawPointCloud() {
             
             if (point.z > nearClip && point.z < farClip) {
                 pointCloud.addVertex(point);
-                ofColor col;
-                col.setHsb(ofMap(point.z, 100, 8000, 0, 255), 255, 255);
-                pointCloud.addColor(col);
+//                ofColor col;
+//                col.setHsb(ofMap(point.z, 100, 8000, 0, 255), 255, 255);
+//                pointCloud.addColor(col);
             }
         }
     }

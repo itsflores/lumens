@@ -4,7 +4,7 @@ const WebSocketServer = require("ws").Server;
 const Light = require("./Light");
 const PORT = process.env.PORT || 8081;
 
-const board = new five.Board({ port: "/dev/cu.usbmodem11401" });
+const board = new five.Board({ port: "/dev/cu.usbmodem1401" });
 
 const wss = new WebSocketServer({
   port: PORT,
