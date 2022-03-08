@@ -1,7 +1,7 @@
 const five = require("johnny-five");
 const pixel = require("node-pixel");
 
-const board = new five.Board({ port: "/dev/cu.usbmodem11401" });
+const board = new five.Board({ port: "/dev/cu.usbmodem11101" });
 
 board.on("ready", () => {
   const strip = pixel.Strip({

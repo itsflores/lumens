@@ -40,7 +40,7 @@ void ofApp::setup(){
             if (emit) {
                 this->sendCloud();
             }
-            this_thread::sleep_for(chrono::milliseconds(300));
+            this_thread::sleep_for(chrono::milliseconds(50));
         }
     });
     backgroundThread.detach();
@@ -202,11 +202,18 @@ void ofApp::sendCloud() {
             int yInt = static_cast<int>(point.y);
             int zInt = static_cast<int>(point.z);
             
-            std::string pointText = std::to_string(xInt)
-                + ":"
-                + std::to_string(yInt)
-                + ":"
-                + std::to_string(zInt);
+//            std::string pointText = std::to_string(xInt)
+//                + ":"
+//                + std::to_string(yInt)
+//                + ":"
+//                + std::to_string(zInt);
+            
+            std::string pointText = "";
+            std::string xString = "\"x\":\"" + std::to_string(xInt) + "\"";
+            std::string yString = "\"y\":\"" + std::to_string(yInt) + "\"";
+            std::string zString = "\"z\":\"" + std::to_string(zInt) + "\"";
+            
+            pointText = "{" + xString + "," + yString + "," + zString + "}";
             
             localPoints.push_back(pointText);
         }
@@ -216,7 +223,13 @@ void ofApp::sendCloud() {
     std::copy(localPoints.begin(), localPoints.end(),
               std::ostream_iterator<std::string>(pointStream, delim));
     
-    pointString = pointStream.str();
+    std::string pointsArray = pointStream.str();
+    
+    if (pointsArray.length() > 0) {
+        pointsArray.pop_back();
+    }
+    
+    pointString = "[" + pointsArray + "]";
     
     char *message = new char[pointString.length() + 1];
     

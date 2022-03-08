@@ -4,7 +4,7 @@ const WebSocketServer = require("ws").Server;
 const Light = require("./Light");
 const PORT = process.env.PORT || 8081;
 
-const board = new five.Board({ port: "/dev/cu.usbmodem1401" });
+const board = new five.Board({ port: "/dev/cu.usbmodem11101" });
 
 const wss = new WebSocketServer({
   port: PORT,
@@ -16,7 +16,8 @@ const Z_DELTA = 150;
 const Y_DELTA = 150;
 
 const populateLights = () => {
-  let xPos = -700;
+  // let xPos = -700;
+  let xPos = 700;
   let zPos = 1500;
   let yPos = 200;
 
@@ -55,41 +56,55 @@ const calcDistance = (pointA, pointB) =>
     Math.hypot(pointB.x - pointA.x, pointB.y - pointA.y, pointB.z - pointA.z)
   );
 
+const lightsOn = Array(5)
+  .fill(null)
+  .map(() => Array(5).fill(false));
+
+const resetLightsOn = () => {
+  for (let row = 0; row < 5; row++) {
+    for (let col = 0; col < 5; col++) {
+      lightsOn[row][col] = false;
+    }
+  }
+};
+
 const handleConnection = (client) => {
   console.log("Connected!");
 
   client.on("message", (data) => {
     // const lightsOn = [false, false, false, false, false];
-    const lightsOn = Array(5)
-      .fill(null)
-      .map(() => Array(5).fill(false));
+    resetLightsOn();
 
     const coordinatesString = data.toString();
-    const coordinates = coordinatesString.split(",").slice(0, -1);
-    const positionData = coordinates.map((coor) => {
-      const [x, y, z] = coor.split(":");
-      return {
-        x: parseInt(x),
-        y: parseInt(y),
-        z: parseInt(z),
-      };
-    });
+    // const coordinates = coordinatesString.split(",").slice(0, -1);
+    // const positionData = coordinates.map((coor) => {
+    //   const [x, y, z] = coor.split(":");
+    //   return {
+    //     x: parseInt(x),
+    //     y: parseInt(y),
+    //     z: parseInt(z),
+    //   };
+    // });
+    const positionData = JSON.parse(coordinatesString);
 
     // console.log(positionData);
     // console.log("data length: ", positionData.length);
 
     if (positionData.length > 0) {
       const filteredPoints = positionData.filter(
-        ({ x, y, z }) => x < -600 && z < 3000
+        ({ x, y, z }) => x > 600 && z < 3000
       );
 
-      for (const entry of filteredPoints) {
-        for (let row = 0; row < 5; row++) {
-          for (let col = 0; col < 5; col++) {
-            let delta = calcDistance(entry, lights[row][col]);
+      for (let row = 0; row < 5; row++) {
+        for (let col = 0; col < 5; col++) {
+          if (!lightsOn[row][col]) {
+            for (const entry of filteredPoints) {
+              let delta = calcDistance(entry, lights[row][col]);
 
-            if (delta < 100) {
-              lightsOn[row][col] = true;
+              if (delta < 100) {
+                lightsOn[row][col] = true;
+                break;
+              }
             }
           }
         }
@@ -106,9 +121,9 @@ const handleConnection = (client) => {
           }
 
           if (currLight.on) {
-            testStrip.pixel(49 - currLight.id).color("#ffffff");
+            testStrip.pixel(currLight.id).color("#ffffff");
           } else {
-            testStrip.pixel(49 - currLight.id).off();
+            testStrip.pixel(currLight.id).off();
           }
         }
       }
