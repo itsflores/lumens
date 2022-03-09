@@ -202,12 +202,6 @@ void ofApp::sendCloud() {
             int yInt = static_cast<int>(point.y);
             int zInt = static_cast<int>(point.z);
             
-//            std::string pointText = std::to_string(xInt)
-//                + ":"
-//                + std::to_string(yInt)
-//                + ":"
-//                + std::to_string(zInt);
-            
             std::string pointText = "";
             std::string xString = "\"x\":\"" + std::to_string(xInt) + "\"";
             std::string yString = "\"y\":\"" + std::to_string(yInt) + "\"";
