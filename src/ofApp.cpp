@@ -40,7 +40,7 @@ void ofApp::setup(){
             if (emit) {
                 this->sendCloud();
             }
-            this_thread::sleep_for(chrono::milliseconds(50));
+            this_thread::sleep_for(chrono::milliseconds(300));
         }
     });
     backgroundThread.detach();
