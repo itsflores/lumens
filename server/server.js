@@ -1,5 +1,7 @@
 const five = require("johnny-five");
 const pixel = require("node-pixel");
+const RBush3D = require("rbush-3d");
+const RBush = require("rbush");
 const WebSocketServer = require("ws").Server;
 const Light = require("./Light");
 const PORT = process.env.PORT || 8081;
@@ -10,7 +12,9 @@ const wss = new WebSocketServer({
   port: PORT,
 });
 
-const lights = [];
+const tree3d = new RBush3D.RBush3D();
+
+const rightWall = [];
 const backLights = [];
 
 const Z_DELTA = 150;
@@ -26,18 +30,10 @@ const calcDistance = (pointA, pointB) =>
 const calc2dDistance = (pointA, pointB) =>
   Math.abs(Math.hypot(pointB.x - pointA.x, pointB.y - pointA.y));
 
-const lightsOn = Array(5)
-  .fill(null)
-  .map(() => Array(5).fill(false));
-
-const backLightsOn = Array(5)
-  .fill(null)
-  .map(() => Array(20).fill(false));
-
-const resetLightsOn = () => {
+const resetRightWall = () => {
   for (let row = 0; row < 5; row++) {
     for (let col = 0; col < 5; col++) {
-      lightsOn[row][col] = false;
+      rightWall[row][col].turnOff();
     }
   }
 };
@@ -50,7 +46,7 @@ const resetBackLightsOn = () => {
   }
 };
 
-const populateLights = () => {
+const populateRightWall = () => {
   // let xPos = -700;
   let xPos = 700;
   let zPos = 1500;
@@ -73,7 +69,7 @@ const populateLights = () => {
     }
     yPos -= Y_DELTA;
 
-    lights.push(row);
+    rightWall.push(row);
   }
 };
 
@@ -116,8 +112,14 @@ const handleConnection = (client) => {
     const coordinatesString = data.toString();
     const positionData = JSON.parse(coordinatesString);
 
-    // processSideWalls(positionData);
-    processBackWalls(positionData);
+    if (tree3d.all().length > 0) {
+      tree3d.clear();
+    }
+
+    tree3d.load(positionData);
+
+    processSideWalls();
+    // processBackWalls(positionData);
 
     // console.log(positionData);
     // console.log("data length: ", positionData.length);
@@ -128,46 +130,53 @@ const handleConnection = (client) => {
   });
 };
 
-const processSideWalls = (positionData) => {
-  // resetLightsOn();
+const processSideWalls = () => {
+  // resetRightWall();
 
-  if (positionData.length > 0) {
-    const filteredPoints = positionData.filter(
-      ({ x, y, z }) => x > 600 && z < 3000
-    );
+  for (let row = 0; row < 5; row++) {
+    for (let col = 0; col < 5; col++) {
+      LEDStrip.pixel(rightWall[row][col].id).off();
+    }
+  }
 
+  if (tree3d.all().length > 0) {
     for (let row = 0; row < 5; row++) {
       for (let col = 0; col < 5; col++) {
-        if (!lightsOn[row][col]) {
-          for (const entry of filteredPoints) {
-            let delta = calcDistance(entry, lights[row][col]);
+        if (!rightWall[row][col].on) {
+          // if (!lightsOn[row][col]) {
+          const collision = tree3d.collides(rightWall[row][col].treePosition);
 
-            if (delta < 50) {
-              lightsOn[row][col] = true;
-              break;
-            }
+          if (collision) {
+            // rightWall[row][col].turnOn();
+            LEDStrip.pixel(rightWall[row][col].id).color("#ffffff");
+            break;
           }
+
+          // for (const entry of filteredPoints) {
+          //   let delta = calcDistance(entry, lights[row][col]);
+
+          //   if (delta < 50) {
+          //     lightsOn[row][col] = true;
+          //     break;
+          //   }
         }
       }
     }
 
-    for (let row = 0; row < 5; row++) {
-      for (let col = 0; col < 5; col++) {
-        const currLight = lights[row][col];
+    // console.log(rightWall);
 
-        if (lightsOn[row][col]) {
-          currLight.turnOn();
-        } else {
-          currLight.turnOff();
-        }
+    // for (let row = 0; row < 5; row++) {
+    //   for (let col = 0; col < 5; col++) {
+    //     const currLight = rightWall[row][col];
 
-        if (currLight.on) {
-          LEDStrip.pixel(currLight.id).color("#ffffff");
-        } else {
-          LEDStrip.pixel(currLight.id).off();
-        }
-      }
-    }
+    // if (lightsOn[row][col]) {
+    //     if (rightWall[row][col].on) {
+    //       LEDStrip.pixel(currLight.id).color("#ffffff");
+    //     } else {
+    //       LEDStrip.pixel(currLight.id).off();
+    //     }
+    //   }
+    // }
     LEDStrip.show();
   }
 };
@@ -218,22 +227,22 @@ const processBackWalls = (positionData) => {
 };
 
 // listen for clients
-// populateLights();
-populateBackLights();
+populateRightWall();
+// populateBackLights();
 board.on("ready", () => {
-  // const strip = pixel.Strip({
-  //   board,
-  //   contoller: "FIRMATA",
-  //   strips: [{ pin: 3, length: 50 }],
-  //   gamma: 2.8,
-  // });
-
   const strip = pixel.Strip({
     board,
     contoller: "FIRMATA",
-    strips: [{ pin: 3, length: 100 }],
+    strips: [{ pin: 3, length: 50 }],
     gamma: 2.8,
   });
+
+  // const strip = pixel.Strip({
+  //   board,
+  //   contoller: "FIRMATA",
+  //   strips: [{ pin: 3, length: 100 }],
+  //   gamma: 2.8,
+  // });
 
   strip.on("ready", () => {
     strip.off();

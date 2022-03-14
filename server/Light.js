@@ -9,6 +9,8 @@ class Light {
   y;
   z;
 
+  treePosition;
+
   id;
 
   radius;
@@ -24,6 +26,14 @@ class Light {
     this.z = z;
     this.radius = radius;
     this.id = id;
+    this.treePosition = {
+      minX: x - radius,
+      minY: y - radius,
+      minZ: z - radius,
+      maxX: x + radius,
+      maxY: y + radius,
+      maxZ: z + radius,
+    };
     // this.note = note;
     // this.octave = octave;
   }

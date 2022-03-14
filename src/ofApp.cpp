@@ -40,7 +40,7 @@ void ofApp::setup(){
             if (emit) {
                 this->sendCloud();
             }
-            this_thread::sleep_for(chrono::milliseconds(300));
+            this_thread::sleep_for(chrono::milliseconds(50));
         }
     });
     backgroundThread.detach();
@@ -203,11 +203,14 @@ void ofApp::sendCloud() {
             int zInt = static_cast<int>(point.z);
             
             std::string pointText = "";
-            std::string xString = "\"x\":\"" + std::to_string(xInt) + "\"";
-            std::string yString = "\"y\":\"" + std::to_string(yInt) + "\"";
-            std::string zString = "\"z\":\"" + std::to_string(zInt) + "\"";
+            std::string minX = "\"minX\":\"" + std::to_string(xInt) + "\"";
+            std::string minY = "\"minY\":\"" + std::to_string(yInt) + "\"";
+            std::string minZ = "\"minZ\":\"" + std::to_string(zInt) + "\"";
+            std::string maxX = "\"maxX\":\"" + std::to_string(xInt) + "\"";
+            std::string maxY = "\"maxY\":\"" + std::to_string(yInt) + "\"";
+            std::string maxZ = "\"maxZ\":\"" + std::to_string(zInt) + "\"";
             
-            pointText = "{" + xString + "," + yString + "," + zString + "}";
+            pointText = "{" + minX + "," + minY + "," + minZ + "," + maxX + "," + maxY + "," + maxZ + "}";
             
             localPoints.push_back(pointText);
         }
