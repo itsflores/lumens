@@ -11,7 +11,6 @@ void ofApp::setup(){
     kinect.setRegistration(true);
     kinect.init();
     kinect.open();
-//    angle = 2;
     
     debugMode = false;
     emit = false;
@@ -155,7 +154,6 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 void ofApp::drawPointCloud() {
-//    vector<string> tempPoints;
     pointCloud.clear();
     int step = 10;
     
@@ -173,10 +171,6 @@ void ofApp::drawPointCloud() {
             }
         }
     }
-    
-//    for(string p : tempPoints) {
-//        cout << p << endl;
-//    }
     
     ofEnableDepthTest();
     ofPushMatrix();

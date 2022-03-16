@@ -1,7 +1,6 @@
 const five = require("johnny-five");
 const pixel = require("node-pixel");
 const RBush3D = require("rbush-3d");
-const RBush = require("rbush");
 const WebSocketServer = require("ws").Server;
 const Light = require("./Light");
 const PORT = process.env.PORT || 8081;
@@ -22,38 +21,22 @@ const Y_DELTA = 150;
 
 let LEDStrip = null;
 
-const calcDistance = (pointA, pointB) =>
-  Math.abs(
-    Math.hypot(pointB.x - pointA.x, pointB.y - pointA.y, pointB.z - pointA.z)
-  );
-
-const calc2dDistance = (pointA, pointB) =>
-  Math.abs(Math.hypot(pointB.x - pointA.x, pointB.y - pointA.y));
-
 const resetRightWall = () => {
   for (let row = 0; row < 5; row++) {
     for (let col = 0; col < 5; col++) {
-      rightWall[row][col].turnOff();
-    }
-  }
-};
-
-const resetBackLightsOn = () => {
-  for (let row = 0; row < 5; row++) {
-    for (let col = 0; col < 20; col++) {
-      backLightsOn[row][col] = false;
+      LEDStrip.pixel(rightWall[row][col].id).off();
     }
   }
 };
 
 const populateRightWall = () => {
-  // let xPos = -700;
+  let Z_ORIGIN = 1500;
   let xPos = 700;
-  let zPos = 1500;
+  let zPos = Z_ORIGIN;
   let yPos = 200;
 
   for (let i = 0; i < 5; i++) {
-    zPos = 1500;
+    zPos = Z_ORIGIN;
 
     const row = [];
     const isEven = i % 2 === 0;
@@ -73,25 +56,23 @@ const populateRightWall = () => {
   }
 };
 
-const populateBackLights = () => {
-  // let xPos = -700;
+const populateBackWall = () => {
+  let X_ORIGIN = 600;
   let SHORT_DELTA_X = 60;
   let SHORT_DELTA_Y = 10;
 
-  let xPos = 600;
-  let zPos = 0;
+  let xPos = X_ORIGIN;
+  let zPos = 2800;
   let yPos = 200;
 
   for (let i = 0; i < 5; i++) {
-    xPos = 600;
+    xPos = X_ORIGIN;
 
     const row = [];
     const isEven = i % 2 === 0;
 
     for (let j = 0; j < 20; j++) {
       const newId = isEven ? j + 20 * i : 20 * (i + 1) - (j + 1);
-
-      // console.log(`[${i}, ${j}]: ${newId}`);
 
       const newLight = new Light(xPos, yPos, zPos, newId);
 
@@ -131,52 +112,22 @@ const handleConnection = (client) => {
 };
 
 const processSideWalls = () => {
-  // resetRightWall();
-
-  for (let row = 0; row < 5; row++) {
-    for (let col = 0; col < 5; col++) {
-      LEDStrip.pixel(rightWall[row][col].id).off();
-    }
-  }
+  resetRightWall();
 
   if (tree3d.all().length > 0) {
     for (let row = 0; row < 5; row++) {
       for (let col = 0; col < 5; col++) {
         if (!rightWall[row][col].on) {
-          // if (!lightsOn[row][col]) {
           const collision = tree3d.collides(rightWall[row][col].treePosition);
 
           if (collision) {
-            // rightWall[row][col].turnOn();
             LEDStrip.pixel(rightWall[row][col].id).color("#ffffff");
             break;
           }
-
-          // for (const entry of filteredPoints) {
-          //   let delta = calcDistance(entry, lights[row][col]);
-
-          //   if (delta < 50) {
-          //     lightsOn[row][col] = true;
-          //     break;
-          //   }
         }
       }
     }
 
-    // console.log(rightWall);
-
-    // for (let row = 0; row < 5; row++) {
-    //   for (let col = 0; col < 5; col++) {
-    //     const currLight = rightWall[row][col];
-
-    // if (lightsOn[row][col]) {
-    //     if (rightWall[row][col].on) {
-    //       LEDStrip.pixel(currLight.id).color("#ffffff");
-    //     } else {
-    //       LEDStrip.pixel(currLight.id).off();
-    //     }
-    //   }
-    // }
     LEDStrip.show();
   }
 };
@@ -227,7 +178,6 @@ const processBackWalls = (positionData) => {
 };
 
 // listen for clients
-populateRightWall();
 // populateBackLights();
 board.on("ready", () => {
   const strip = pixel.Strip({
@@ -247,6 +197,7 @@ board.on("ready", () => {
   strip.on("ready", () => {
     strip.off();
     LEDStrip = strip;
+    populateRightWall();
   });
 });
 
