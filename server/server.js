@@ -20,10 +20,10 @@ let LEDStrip = null;
 const populateRightWall = () => {
   const lights = [];
 
+  const Z_ORIGIN = 1500;
   const Z_DELTA = 150;
   const Y_DELTA = 150;
 
-  const Z_ORIGIN = 1500;
   let xPos = 700;
   let zPos = Z_ORIGIN;
   let yPos = 200;
