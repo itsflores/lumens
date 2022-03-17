@@ -11,8 +11,6 @@ class Light {
 
   treePosition;
 
-  stripId;
-
   led;
 
   radius;
