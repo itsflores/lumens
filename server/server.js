@@ -102,7 +102,7 @@ const handleConnection = (client) => {
     tree3d.load(positionData);
 
     // if (tree3d.all().length > 0) {
-    // processRightWall();
+    processRightWall();
     processBackWall();
     // }
 
