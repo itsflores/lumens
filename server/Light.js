@@ -47,17 +47,25 @@ class Light {
   }
 
   turnOn() {
-    this.led.color("#ffffff");
-    this.on = true;
+    if (this.isOff()) {
+      this.led.color("#ffffff");
+      this.on = true;
+    }
   }
 
   turnOff() {
-    this.led.off();
-    this.on = false;
+    if (this.isOn()) {
+      this.led.off();
+      this.on = false;
+    }
   }
 
   isOn() {
     return this.on;
+  }
+
+  isOff() {
+    return this.on === false;
   }
 
   toString() {

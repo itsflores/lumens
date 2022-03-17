@@ -25,7 +25,7 @@ class LEDGrid {
   updateLEDs(tree) {
     for (let row = 0; row < this.height; row++) {
       for (let col = 0; col < this.width; col++) {
-        if (!this.lights[row][col].isOn()) {
+        if (this.lights[row][col].isOff()) {
           const collision = tree.collides(this.lights[row][col].treePosition);
 
           if (collision) {

@@ -6,7 +6,7 @@ const Light = require("./Light");
 const LEDGrid = require("./LEDGrid");
 
 const PORT = process.env.PORT || 8081;
-const board = new five.Board({ port: "/dev/cu.usbmodem1401" });
+const board = new five.Board({ port: "/dev/cu.usbmodem1101" });
 const wss = new WebSocketServer({
   port: PORT,
 });
@@ -31,7 +31,7 @@ const populateRightWall = () => {
   for (let row = 0; row < 5; row++) {
     zPos = Z_ORIGIN;
 
-    const row = [];
+    const lightsRow = [];
     const isEven = row % 2 === 0;
 
     for (let col = 0; col < 5; col++) {
@@ -46,13 +46,13 @@ const populateRightWall = () => {
         LEDStrip.pixel(stripPosition + 100)
       );
 
-      row.push(newLight);
+      lightsRow.push(newLight);
 
       zPos += Z_DELTA;
     }
     yPos -= Y_DELTA;
 
-    lights.push(row);
+    lights.push(lightsRow);
   }
 
   rightWall = new LEDGrid(lights);
@@ -72,7 +72,7 @@ const populateBackWall = () => {
   for (let row = 0; row < 5; row++) {
     xPos = X_ORIGIN;
 
-    const row = [];
+    const lightsRow = [];
     const isEven = row % 2 === 0;
 
     for (let col = 0; col < 20; col++) {
@@ -88,13 +88,13 @@ const populateBackWall = () => {
         true
       );
 
-      row.push(newLight);
+      lightsRow.push(newLight);
 
       xPos -= DELTA_X;
     }
     yPos -= DELTA_Y;
 
-    lights.push(row);
+    lights.push(lightsRow);
   }
 
   backWall = new LEDGrid(lights);
@@ -110,7 +110,7 @@ const handleConnection = (client) => {
     pointsTree.clear();
     pointsTree.load(positionData);
 
-    processRightWall();
+    // processRightWall();
     processBackWall();
 
     // console.log(positionData);
@@ -149,13 +149,14 @@ const init = () => {
     strip.on("ready", () => {
       strip.off();
       LEDStrip = strip;
-      populateRightWall();
+      
+      // populateRightWall();
       populateBackWall();
+      
+      wss.on("connection", handleConnection);
+      console.log(`Websockets listening on port ${PORT}`);
     });
   });
-
-  wss.on("connection", handleConnection);
-  console.log(`Websockets listening on port ${PORT}`);
 };
 
 init();
