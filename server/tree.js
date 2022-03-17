@@ -1,5 +1,4 @@
 const RBush3D = require("rbush-3d");
-const RBush = require("rbush");
 const Light = require("./Light");
 
 const tree3d = new RBush3D.RBush3D();

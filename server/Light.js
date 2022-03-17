@@ -40,20 +40,12 @@ class Light {
     // this.octave = octave;
   }
 
-  setLed(led) {
-    this.led = led;
-  }
-
   setIntensity(intensity) {
     this.setIntensity = intensity;
   }
 
   setRadius(radius) {
     this.radius = radius;
-  }
-
-  switch() {
-    this.on = !this.on;
   }
 
   turnOn() {
