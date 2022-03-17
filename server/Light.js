@@ -11,31 +11,38 @@ class Light {
 
   treePosition;
 
-  id;
+  stripId;
+
+  led;
 
   radius;
 
   note;
   octave;
 
-  constructor(x, y, z, id, radius = LIGHT_RADIUS) {
+  constructor(x, y, z, stripId, maxDepth = false, radius = LIGHT_RADIUS) {
     this.intensity = 0;
     this.on = false;
     this.x = x;
     this.y = y;
     this.z = z;
     this.radius = radius;
-    this.id = id;
+    this.stripId = stripId;
     this.treePosition = {
       minX: x - radius,
       minY: y - radius,
-      minZ: z - radius,
+      minZ: maxDepth ? 1 : z - radius,
       maxX: x + radius,
       maxY: y + radius,
-      maxZ: z + radius,
+      maxZ: maxDepth ? 2999 : z + radius,
     };
+    // this.led = led;
     // this.note = note;
     // this.octave = octave;
+  }
+
+  setLed(led) {
+    this.led = led;
   }
 
   setIntensity(intensity) {
@@ -58,8 +65,8 @@ class Light {
     this.on = false;
   }
 
-  updateIntensity(x, y, z) {
-    // calculations
+  isOn() {
+    return this.on;
   }
 
   toString() {

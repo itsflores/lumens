@@ -39,7 +39,7 @@ void ofApp::setup(){
             if (emit) {
                 this->sendCloud();
             }
-            this_thread::sleep_for(chrono::milliseconds(50));
+            this_thread::sleep_for(chrono::milliseconds(200));
         }
     });
     backgroundThread.detach();
@@ -184,10 +184,10 @@ void ofApp::drawPointCloud() {
 }
 
 void ofApp::sendCloud() {
-    std::vector<string> localPoints;
+    //std::vector<string> localPoints;
     std::string pointString = "";
-    std::ostringstream pointStream;
-    const char* const delim = ",";
+    std::stringstream pointStream;
+    //const char* const delim = ",";
     
     // Creates vector of "x:y:z" strings
     if (pointCloud.hasVertices()) {
@@ -196,23 +196,28 @@ void ofApp::sendCloud() {
             int yInt = static_cast<int>(point.y);
             int zInt = static_cast<int>(point.z);
             
-            std::string pointText = "";
-            std::string minX = "\"minX\":\"" + std::to_string(xInt) + "\"";
-            std::string minY = "\"minY\":\"" + std::to_string(yInt) + "\"";
-            std::string minZ = "\"minZ\":\"" + std::to_string(zInt) + "\"";
-            std::string maxX = "\"maxX\":\"" + std::to_string(xInt) + "\"";
-            std::string maxY = "\"maxY\":\"" + std::to_string(yInt) + "\"";
-            std::string maxZ = "\"maxZ\":\"" + std::to_string(zInt) + "\"";
+            //std::string pointText = "";
+            //std::string minX = "\"minX\":\"" + std::to_string(xInt) + "\"";
+            //std::string minY = "\"minY\":\"" + std::to_string(yInt) + "\"";
+            //std::string minZ = "\"minZ\":\"" + std::to_string(zInt) + "\"";
+            //std::string maxX = "\"maxX\":\"" + std::to_string(xInt) + "\"";
+            //std::string maxY = "\"maxY\":\"" + std::to_string(yInt) + "\"";
+            //std::string maxZ = "\"maxZ\":\"" + std::to_string(zInt) + "\"";
             
-            pointText = "{" + minX + "," + minY + "," + minZ + "," + maxX + "," + maxY + "," + maxZ + "}";
+            //pointText = "{" + minX + "," + minY + "," + minZ + "," + maxX + "," + maxY + "," + maxZ + "}";
             
-            localPoints.push_back(pointText);
+            std::stringstream singlePoint;
+            singlePoint << "{\"minX\":" << xInt << ",\"minY\":" << yInt << ",\"minZ\":" << zInt << ",\"maxX\":" << xInt << ",\"maxY\":" << yInt << ",\"maxZ\":" << zInt << "}";
+            
+            pointStream << singlePoint.rdbuf() << ",";
+            
+            //localPoints.push_back(pointText);
         }
 //        std::cout << localPoints[0] << std::endl;
     }
     
-    std::copy(localPoints.begin(), localPoints.end(),
-              std::ostream_iterator<std::string>(pointStream, delim));
+    //std::copy(localPoints.begin(), localPoints.end(),
+    //          std::ostream_iterator<std::string>(pointStream, delim));
     
     std::string pointsArray = pointStream.str();
     
@@ -229,7 +234,7 @@ void ofApp::sendCloud() {
     m_psock->sendFrame(message, strlen(message), WebSocket::FRAME_TEXT);
 //    std::cout << "sent!" << std::endl;
 
-    localPoints.clear();
+//    localPoints.clear();
     
     // receive code NOT NEEDED
 //    char receiveBuff[256];

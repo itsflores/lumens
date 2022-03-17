@@ -5,7 +5,7 @@ const WebSocketServer = require("ws").Server;
 const Light = require("./Light");
 const PORT = process.env.PORT || 8081;
 
-const board = new five.Board({ port: "/dev/cu.usbmodem11401" });
+const board = new five.Board({ port: "/dev/cu.usbmodem1401" });
 
 const wss = new WebSocketServer({
   port: PORT,
@@ -13,18 +13,20 @@ const wss = new WebSocketServer({
 
 const tree3d = new RBush3D.RBush3D();
 
+const leftWall = [];
 const rightWall = [];
-const backLights = [];
+const backWall = [];
 
 const Z_DELTA = 150;
 const Y_DELTA = 150;
 
 let LEDStrip = null;
 
-const resetRightWall = () => {
-  for (let row = 0; row < 5; row++) {
-    for (let col = 0; col < 5; col++) {
-      LEDStrip.pixel(rightWall[row][col].id).off();
+const resetWall = (wall) => {
+  for (let row = 0; row < wall.length; row++) {
+    for (let col = 0; col < wall[0].length; col++) {
+      LEDStrip.pixel(wall[row][col].stripId).off();
+      wall[row][col].turnOff();
     }
   }
 };
@@ -44,7 +46,7 @@ const populateRightWall = () => {
     for (let j = 0; j < 5; j++) {
       const newId = isEven ? 2 * j + 10 * i : 10 * (i + 1) - 2 * (j + 1);
 
-      const newLight = new Light(xPos, yPos, zPos, newId);
+      const newLight = new Light(xPos, yPos, zPos, newId + 100);
 
       row.push(newLight);
 
@@ -59,11 +61,11 @@ const populateRightWall = () => {
 const populateBackWall = () => {
   let X_ORIGIN = 600;
   let SHORT_DELTA_X = 60;
-  let SHORT_DELTA_Y = 10;
+  let SHORT_DELTA_Y = 100;
 
   let xPos = X_ORIGIN;
   let zPos = 2800;
-  let yPos = 200;
+  let yPos = 0;
 
   for (let i = 0; i < 5; i++) {
     xPos = X_ORIGIN;
@@ -74,7 +76,7 @@ const populateBackWall = () => {
     for (let j = 0; j < 20; j++) {
       const newId = isEven ? j + 20 * i : 20 * (i + 1) - (j + 1);
 
-      const newLight = new Light(xPos, yPos, zPos, newId);
+      const newLight = new Light(xPos, yPos, zPos, newId, true);
 
       row.push(newLight);
 
@@ -82,7 +84,7 @@ const populateBackWall = () => {
     }
     yPos -= SHORT_DELTA_Y;
 
-    backLights.push(row);
+    backWall.push(row);
   }
 };
 
@@ -93,17 +95,21 @@ const handleConnection = (client) => {
     const coordinatesString = data.toString();
     const positionData = JSON.parse(coordinatesString);
 
-    if (tree3d.all().length > 0) {
-      tree3d.clear();
-    }
+    // if (tree3d.all().length > 0) {
+    tree3d.clear();
+    // }
 
     tree3d.load(positionData);
 
-    processSideWalls();
-    // processBackWalls(positionData);
+    // if (tree3d.all().length > 0) {
+    // processRightWall();
+    processBackWall();
+    // }
 
     // console.log(positionData);
     // console.log("data length: ", positionData.length);
+
+    LEDStrip.show();
   });
 
   client.on("close", () => {
@@ -111,69 +117,28 @@ const handleConnection = (client) => {
   });
 };
 
-const processSideWalls = () => {
-  resetRightWall();
-
-  if (tree3d.all().length > 0) {
-    for (let row = 0; row < 5; row++) {
-      for (let col = 0; col < 5; col++) {
-        if (!rightWall[row][col].on) {
-          const collision = tree3d.collides(rightWall[row][col].treePosition);
-
-          if (collision) {
-            LEDStrip.pixel(rightWall[row][col].id).color("#ffffff");
-            break;
-          }
-        }
-      }
-    }
-
-    LEDStrip.show();
-  }
+const processRightWall = () => {
+  resetWall(rightWall);
+  updateWallState(rightWall);
 };
 
-const processBackWalls = (positionData) => {
-  resetBackLightsOn();
+const processBackWall = () => {
+  resetWall(backWall);
+  updateWallState(backWall);
+};
 
-  if (positionData.length > 0) {
-    const filteredPoints = positionData.filter(({ x, y, z }) => z < 3000);
+const updateWallState = (wall) => {
+  for (let row = 0; row < wall.length; row++) {
+    for (let col = 0; col < wall[0].length; col++) {
+      if (!wall[row][col].isOn()) {
+        const collision = tree3d.collides(wall[row][col].treePosition);
 
-    for (let row = 0; row < 5; row++) {
-      for (let col = 0; col < 20; col++) {
-        if (!backLightsOn[row][col]) {
-          for (const entry of filteredPoints) {
-            let delta = calc2dDistance(entry, backLights[row][col]);
-
-            if (delta < 50) {
-              backLightsOn[row][col] = true;
-              break;
-            }
-          }
+        if (collision) {
+          wall[row][col].turnOn();
+          LEDStrip.pixel(wall[row][col].stripId).color("#ffffff");
         }
       }
     }
-
-    for (let row = 0; row < 5; row++) {
-      for (let col = 0; col < 20; col++) {
-        const currLight = backLights[row][col];
-
-        if (backLightsOn[row][col]) {
-          currLight.turnOn();
-        } else {
-          currLight.turnOff();
-        }
-
-        if (currLight.on) {
-          LEDStrip.pixel(currLight.id).color("#ffffff");
-        } else {
-          LEDStrip.pixel(currLight.id).off();
-        }
-      }
-    }
-
-    // console.log(backLightsOn);
-
-    LEDStrip.show();
   }
 };
 
@@ -183,21 +148,18 @@ board.on("ready", () => {
   const strip = pixel.Strip({
     board,
     contoller: "FIRMATA",
-    strips: [{ pin: 3, length: 50 }],
+    strips: [
+      { pin: 3, length: 100 },
+      { pin: 7, length: 50 },
+    ],
     gamma: 2.8,
   });
-
-  // const strip = pixel.Strip({
-  //   board,
-  //   contoller: "FIRMATA",
-  //   strips: [{ pin: 3, length: 100 }],
-  //   gamma: 2.8,
-  // });
 
   strip.on("ready", () => {
     strip.off();
     LEDStrip = strip;
     populateRightWall();
+    populateBackWall();
   });
 });
 
