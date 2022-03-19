@@ -6,7 +6,7 @@ const Light = require("./Light");
 const LEDGrid = require("./LEDGrid");
 
 const PORT = process.env.PORT || 8081;
-const board = new five.Board({ port: "/dev/cu.usbmodem1101" });
+const board = new five.Board({ port: "/dev/cu.usbmodem1401" });
 const wss = new WebSocketServer({
   port: PORT,
 });
@@ -16,6 +16,47 @@ let leftWall = null;
 let rightWall = null;
 let backWall = null;
 let LEDStrip = null;
+
+const populateLeftWall = () => {
+  const lights = [];
+
+  const Z_ORIGIN = 1500;
+  const Z_DELTA = 150;
+  const Y_DELTA = 150;
+
+  let xPos = -700;
+  let zPos = Z_ORIGIN;
+  let yPos = 200;
+
+  for (let row = 0; row < 5; row++) {
+    zPos = Z_ORIGIN;
+
+    const lightsRow = [];
+    const isEven = row % 2 === 0;
+
+    for (let col = 0; col < 5; col++) {
+      const stripPosition = isEven
+        ? 2 * col + 10 * row
+        : 10 * (row + 1) - 2 * (col + 1);
+
+      const newLight = new Light(
+        xPos,
+        yPos,
+        zPos,
+        LEDStrip.pixel(stripPosition + 150)
+      );
+
+      lightsRow.push(newLight);
+
+      zPos += Z_DELTA;
+    }
+    yPos -= Y_DELTA;
+
+    lights.push(lightsRow);
+  }
+
+  leftWall = new LEDGrid(lights);
+};
 
 const populateRightWall = () => {
   const lights = [];
@@ -110,7 +151,8 @@ const handleConnection = (client) => {
     pointsTree.clear();
     pointsTree.load(positionData);
 
-    // processRightWall();
+    processRightWall();
+    processLeftWall();
     processBackWall();
 
     // console.log(positionData);
@@ -134,6 +176,11 @@ const processBackWall = () => {
   backWall.updateLEDs(pointsTree);
 };
 
+const processLeftWall = () => {
+  leftWall.reset();
+  leftWall.updateLEDs(pointsTree);
+};
+
 const init = () => {
   board.on("ready", () => {
     const strip = pixel.Strip({
@@ -142,6 +189,7 @@ const init = () => {
       strips: [
         { pin: 3, length: 100 },
         { pin: 7, length: 50 },
+        { pin: 2, length: 50 },
       ],
       gamma: 2.8,
     });
@@ -149,10 +197,11 @@ const init = () => {
     strip.on("ready", () => {
       strip.off();
       LEDStrip = strip;
-      
-      // populateRightWall();
+
+      populateRightWall();
       populateBackWall();
-      
+      populateLeftWall();
+
       wss.on("connection", handleConnection);
       console.log(`Websockets listening on port ${PORT}`);
     });

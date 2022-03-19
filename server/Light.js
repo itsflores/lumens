@@ -1,5 +1,7 @@
 // Units are in millimetres
 const LIGHT_RADIUS = 50;
+const LED_COLOR = "#FFFFFF";
+// const LED_COLOR = "#0000FF";
 
 class Light {
   intensity;
@@ -48,7 +50,7 @@ class Light {
 
   turnOn() {
     if (this.isOff()) {
-      this.led.color("#ffffff");
+      this.led.color(LED_COLOR);
       this.on = true;
     }
   }
