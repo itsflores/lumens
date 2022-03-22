@@ -1,26 +1,27 @@
 // Units are in millimetres
 const LIGHT_RADIUS = 50;
 const LED_COLOR = "#FFFFFF";
-// const LED_COLOR = "#0000FF";
 
 class Light {
   intensity;
   on;
-
   x;
   y;
   z;
-
   treePosition;
-
   led;
-
   radius;
+  soundUpdate;
 
-  note;
-  octave;
-
-  constructor(x, y, z, led, maxDepth = false, radius = LIGHT_RADIUS) {
+  constructor(
+    x,
+    y,
+    z,
+    led,
+    soundUpdate,
+    maxDepth = false,
+    radius = LIGHT_RADIUS
+  ) {
     this.intensity = 0;
     this.on = false;
     this.x = x;
@@ -36,8 +37,7 @@ class Light {
       maxZ: maxDepth ? 2999 : z + radius,
     };
     this.led = led;
-    // this.note = note;
-    // this.octave = octave;
+    this.soundUpdate = soundUpdate;
   }
 
   setIntensity(intensity) {
@@ -52,6 +52,7 @@ class Light {
     if (this.isOff()) {
       this.led.color(LED_COLOR);
       this.on = true;
+      this.soundUpdate();
     }
   }
 

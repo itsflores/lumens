@@ -4,6 +4,7 @@ const RBush3D = require("rbush-3d");
 const WebSocketServer = require("ws").Server;
 const Light = require("./Light");
 const LEDGrid = require("./LEDGrid");
+const SoundBoard = require("./SoundBoard");
 
 const PORT = process.env.PORT || 8081;
 const board = new five.Board({ port: "/dev/cu.usbmodem1401" });
@@ -11,6 +12,8 @@ const wss = new WebSocketServer({
   port: PORT,
 });
 const pointsTree = new RBush3D.RBush3D();
+
+const soundBoard = new SoundBoard();
 
 let leftWall = null;
 let rightWall = null;
@@ -80,11 +83,27 @@ const populateRightWall = () => {
         ? 2 * col + 10 * row
         : 10 * (row + 1) - 2 * (col + 1);
 
+      let soundFunction = () => {};
+
+      if (col === 4) {
+        soundFunction = () => {
+          soundBoard.instruments.synth.setVariant(row);
+        };
+      }
+
+      if (col === 3) {
+        soundFunction = () => {
+          soundBoard.instruments.synth.setVolume(row);
+        };
+      }
+
       const newLight = new Light(
         xPos,
         yPos,
         zPos,
-        LEDStrip.pixel(stripPosition + 100)
+        // LEDStrip.pixel(stripPosition + 100)
+        LEDStrip.pixel(stripPosition),
+        soundFunction
       );
 
       lightsRow.push(newLight);
@@ -148,12 +167,18 @@ const handleConnection = (client) => {
     const coordinatesString = data.toString();
     const positionData = JSON.parse(coordinatesString);
 
+    if (positionData.length > 0) {
+      soundBoard.turnOn();
+    } else {
+      soundBoard.turnOff();
+    }
+
     pointsTree.clear();
     pointsTree.load(positionData);
 
     processRightWall();
-    processLeftWall();
-    processBackWall();
+    // processLeftWall();
+    // processBackWall();
 
     // console.log(positionData);
     // console.log("data length: ", positionData.length);
@@ -199,8 +224,10 @@ const init = () => {
       LEDStrip = strip;
 
       populateRightWall();
-      populateBackWall();
-      populateLeftWall();
+      // populateBackWall();
+      // populateLeftWall();
+
+      soundBoard.play();
 
       wss.on("connection", handleConnection);
       console.log(`Websockets listening on port ${PORT}`);

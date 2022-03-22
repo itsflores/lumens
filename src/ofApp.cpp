@@ -11,13 +11,14 @@ void ofApp::setup(){
     kinect.setRegistration(true);
     kinect.init();
     kinect.open();
+    kinect.setCameraTiltAngle(0);
     
     debugMode = false;
     emit = false;
     
     // milimeters
     nearClip = 500;
-    farClip = 3000;
+    farClip = 2900;
 //    farClip = 1500;
     
     // cloud
@@ -164,10 +165,10 @@ void ofApp::drawPointCloud() {
             point = kinect.getWorldCoordinateAt(x, y);
             
             if (point.z > nearClip && point.z < farClip) {
+                ofColor col;
+                col.setHsb(ofMap(point.z, 100, 8000, 0, 255), 255, 255);
+                pointCloud.addColor(col);
                 pointCloud.addVertex(point);
-//                ofColor col;
-//                col.setHsb(ofMap(point.z, 100, 8000, 0, 255), 255, 255);
-//                pointCloud.addColor(col);
             }
         }
     }
