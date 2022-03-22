@@ -1,12 +1,6 @@
 const player = require("sound-play");
 const Instrument = require("./Instrument");
 
-const VOL_1 = 0;
-const VOL_2 = 0.25;
-const VOL_3 = 0.5;
-const VOL_4 = 0.75;
-const VOL_5 = 1;
-
 const BAR_LEN = 27480;
 
 const playAudio = (audioPath, volume) => {

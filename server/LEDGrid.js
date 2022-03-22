@@ -1,35 +1,34 @@
 class LEDGrid {
-  lights;
-
-  width;
-  height;
+  _lights;
+  _width;
+  _height;
 
   constructor(lights) {
-    this.lights = lights;
-    this.height = lights.length;
-    this.width = lights[0].length;
+    this._lights = lights;
+    this._height = lights.length;
+    this._width = lights[0].length;
   }
 
   reset() {
-    for (let row = 0; row < this.height; row++) {
-      for (let col = 0; col < this.width; col++) {
-        this.lights[row][col].turnOff();
+    for (let row = 0; row < this._height; row++) {
+      for (let col = 0; col < this._width; col++) {
+        this._lights[row][col].turnOff();
       }
     }
   }
 
   setLights(lights) {
-    this.lights = lights;
+    this._lights = lights;
   }
 
   updateLEDs(tree) {
-    for (let row = 0; row < this.height; row++) {
-      for (let col = 0; col < this.width; col++) {
-        if (this.lights[row][col].isOff()) {
-          const collision = tree.collides(this.lights[row][col].treePosition);
+    for (let row = 0; row < this._height; row++) {
+      for (let col = 0; col < this._width; col++) {
+        if (this._lights[row][col].isOff()) {
+          const collision = tree.collides(this._lights[row][col].treePosition);
 
           if (collision) {
-            this.lights[row][col].turnOn();
+            this._lights[row][col].turnOn();
           }
         }
       }
