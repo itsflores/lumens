@@ -4,32 +4,34 @@ const VOL_3 = 0.5;
 const VOL_4 = 0.75;
 const VOL_5 = 1;
 
-const synthFile = (variant) => `./sounds/synth-${variant}.wav`;
+const synthFile = (name, variant) => `./sounds/${name}-${variant}.wav`;
 
 class Instrument {
   _variant;
   _volume;
   _file;
   _playFunction;
+  _name;
 
-  constructor(playFunction) {
-    this.playFunction = playFunction;
-    this.variant = 1;
-    this.volume = VOL_2;
-    this.file = synthFile(this.variant);
+  constructor(name, playFunction) {
+    this._playFunction = playFunction;
+    this._variant = 1;
+    this._volume = VOL_1;
+    this._name = name;
+    this._file = synthFile(this._name, this._variant);
   }
 
   setVariant(variant) {
-    this.variant = variant + 1;
-    this.file = synthFile(this.variant);
+    this._variant = variant + 1;
+    this._file = synthFile(this._name, this._variant);
   }
 
   setVolume(volume) {
-    this.volume = volume * 0.25;
+    this._volume = volume * 0.25;
   }
 
   play() {
-    this.playFunction(this.file, this.volume);
+    this._playFunction(this._file, this._volume);
   }
 }
 

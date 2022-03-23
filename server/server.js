@@ -14,6 +14,7 @@ const wss = new WebSocketServer({
 const pointsTree = new RBush3D.RBush3D();
 
 const soundBoard = new SoundBoard();
+const { synth } = soundBoard.instruments;
 
 let leftWall = null;
 let rightWall = null;
@@ -87,13 +88,13 @@ const populateRightWall = () => {
 
       if (col === 4) {
         soundFunction = () => {
-          soundBoard.instruments.synth.setVariant(row);
+          synth.setVariant(row);
         };
       }
 
       if (col === 3) {
         soundFunction = () => {
-          soundBoard.instruments.synth.setVolume(row);
+          synth.setVolume(row);
         };
       }
 
@@ -103,7 +104,8 @@ const populateRightWall = () => {
         zPos,
         // LEDStrip.pixel(stripPosition + 100)
         LEDStrip.pixel(stripPosition),
-        soundFunction
+        soundFunction,
+        synth
       );
 
       lightsRow.push(newLight);
@@ -115,7 +117,13 @@ const populateRightWall = () => {
     lights.push(lightsRow);
   }
 
-  rightWall = new LEDGrid(lights);
+  // lights[0][0].turnOn();
+  // lights[0][1].turnOn();
+  // lights[0][2].turnOn();
+  // lights[0][3].turnOn();
+  // lights[0][4].turnOn();
+
+  rightWall = new LEDGrid(lights, "sound");
 };
 
 const populateBackWall = () => {
@@ -192,8 +200,8 @@ const handleConnection = (client) => {
 };
 
 const processRightWall = () => {
-  rightWall.reset();
-  rightWall.updateLEDs(pointsTree);
+  // rightWall.reset();
+  // rightWall.updateLEDs(pointsTree);
 };
 
 const processBackWall = () => {
@@ -226,6 +234,8 @@ const init = () => {
       populateRightWall();
       // populateBackWall();
       // populateLeftWall();
+
+      strip.show();
 
       soundBoard.play();
 
