@@ -5,14 +5,16 @@ const WebSocketServer = require("ws").Server;
 const Light = require("./Light");
 const LEDGrid = require("./LEDGrid");
 const SoundBoard = require("./SoundBoard");
+const Metronome = require("./Metronome");
 
 const PORT = process.env.PORT || 8081;
-const board = new five.Board({ port: "/dev/cu.usbmodem1401" });
+const board = new five.Board({ port: "/dev/cu.usbmodem11401" });
 const wss = new WebSocketServer({
   port: PORT,
 });
 const pointsTree = new RBush3D.RBush3D();
 
+const metronome = new Metronome();
 const soundBoard = new SoundBoard();
 const { synth } = soundBoard.instruments;
 
@@ -102,8 +104,8 @@ const populateRightWall = () => {
         xPos,
         yPos,
         zPos,
-        // LEDStrip.pixel(stripPosition + 100)
-        LEDStrip.pixel(stripPosition),
+        LEDStrip.pixel(stripPosition + 100),
+        // LEDStrip.pixel(stripPosition),
         soundFunction,
         synth
       );
@@ -116,12 +118,6 @@ const populateRightWall = () => {
 
     lights.push(lightsRow);
   }
-
-  // lights[0][0].turnOn();
-  // lights[0][1].turnOn();
-  // lights[0][2].turnOn();
-  // lights[0][3].turnOn();
-  // lights[0][4].turnOn();
 
   rightWall = new LEDGrid(lights, "sound");
 };
@@ -153,6 +149,8 @@ const populateBackWall = () => {
         yPos,
         zPos,
         LEDStrip.pixel(stripPosition),
+        () => {},
+        null,
         true
       );
 
@@ -184,29 +182,28 @@ const handleConnection = (client) => {
     pointsTree.clear();
     pointsTree.load(positionData);
 
-    processRightWall();
+    // processRightWall();
     // processLeftWall();
     // processBackWall();
 
     // console.log(positionData);
     // console.log("data length: ", positionData.length);
-
-    LEDStrip.show();
   });
 
   client.on("close", () => {
     console.log("Connection lost");
+    soundBoard.turnOff();
   });
 };
 
 const processRightWall = () => {
-  // rightWall.reset();
-  // rightWall.updateLEDs(pointsTree);
+  rightWall.reset();
+  rightWall.updateLEDs(pointsTree);
 };
 
 const processBackWall = () => {
   backWall.reset();
-  backWall.updateLEDs(pointsTree);
+  backWall.updateLEDs(pointsTree, metronome.getBar());
 };
 
 const processLeftWall = () => {
@@ -232,12 +229,29 @@ const init = () => {
       LEDStrip = strip;
 
       populateRightWall();
-      // populateBackWall();
+      populateBackWall();
       // populateLeftWall();
 
       strip.show();
 
-      soundBoard.play();
+      // metronome.init();
+
+      soundBoard.playSection();
+
+      // metronome.onSectionChange(() => {
+      // });
+
+      metronome.onBarChange(() => {
+        if (metronome.getBeat() === 1) {
+          soundBoard.playSection();
+        }
+
+        processRightWall();
+        processBackWall();
+        LEDStrip.show();
+
+        metronome.updateTime();
+      });
 
       wss.on("connection", handleConnection);
       console.log(`Websockets listening on port ${PORT}`);

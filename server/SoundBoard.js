@@ -1,8 +1,6 @@
 const player = require("sound-play");
 const Instrument = require("./Instrument");
 
-const BAR_LEN = 13716; // 6 bars of 105 bpm in milliseconds
-
 const playAudio = (audioPath, volume) => {
   player.play(audioPath, volume);
 };
@@ -34,12 +32,10 @@ class SoundBoard {
     }
   }
 
-  play() {
-    setInterval(() => {
-      if (this._on) {
-        this.useInstruments();
-      }
-    }, BAR_LEN);
+  playSection() {
+    if (this._on) {
+      this.useInstruments();
+    }
   }
 }
 

@@ -1,6 +1,6 @@
 // Units are in millimetres
 const LIGHT_RADIUS = 50;
-const LED_COLOR = "#FFFFFF";
+const LIGHT_COLOR = "#FFFFFF";
 
 class Light {
   _on;
@@ -47,9 +47,9 @@ class Light {
     this._radius = radius;
   }
 
-  turnOn() {
+  turnOn(color = LIGHT_COLOR) {
     if (this.isOff()) {
-      this._led.color(LED_COLOR);
+      this._led.color(color);
       this._on = true;
       this.soundUpdate();
     }

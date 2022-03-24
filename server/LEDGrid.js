@@ -1,3 +1,10 @@
+const LightColors = {
+  1: "#FFFFFF",
+  4: "#FFFF00",
+  2: "#64e764",
+  3: "#4465c6",
+};
+
 class LEDGrid {
   _lights;
   _width;
@@ -23,33 +30,16 @@ class LEDGrid {
     this._lights = lights;
   }
 
-  updateLEDs(tree) {
-    if (this._type === "lights") {
-      for (let row = 0; row < this._height; row++) {
-        for (let col = 0; col < this._width; col++) {
-          if (this._lights[row][col].isOff()) {
-            const collision = tree.collides(
-              this._lights[row][col].treePosition
-            );
+  updateLEDs(tree, beat) {
+    const color = LightColors[beat];
 
-            if (collision) {
-              this._lights[row][col].turnOn();
-            }
-          }
-        }
-      }
-    } else {
-      for (let row = 0; row < this._height; row++) {
-        for (let col = 0; col < this._width; col++) {
-          if (this._lights[row][col].isOff()) {
-            const collision = tree.collides(
-              this._lights[row][col].treePosition
-            );
+    for (let row = 0; row < this._height; row++) {
+      for (let col = 0; col < this._width; col++) {
+        if (this._lights[row][col].isOff()) {
+          const collision = tree.collides(this._lights[row][col].treePosition);
 
-            if (collision) {
-              this._lights[row][col].turnOn();
-              break;
-            }
+          if (collision) {
+            this._lights[row][col].turnOn(color);
           }
         }
       }
