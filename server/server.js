@@ -7,13 +7,13 @@ const LEDGrid = require("./LEDGrid");
 const SoundBoard = require("./SoundBoard");
 const Metronome = require("./Metronome");
 
-const PORT = process.env.PORT || 8081;
+const PORT = 8081;
 const board = new five.Board({ port: "/dev/cu.usbmodem11401" });
 const wss = new WebSocketServer({
   port: PORT,
 });
-const pointsTree = new RBush3D.RBush3D();
 
+const pointsTree = new RBush3D.RBush3D();
 const metronome = new Metronome();
 const soundBoard = new SoundBoard();
 const { synth } = soundBoard.instruments;
@@ -166,6 +166,21 @@ const populateBackWall = () => {
   backWall = new LEDGrid(lights);
 };
 
+const processRightWall = () => {
+  rightWall.reset();
+  rightWall.updateLEDs(pointsTree);
+};
+
+const processBackWall = () => {
+  backWall.reset();
+  backWall.updateLEDs(pointsTree, metronome.getBar());
+};
+
+const processLeftWall = () => {
+  leftWall.reset();
+  leftWall.updateLEDs(pointsTree);
+};
+
 const handleConnection = (client) => {
   console.log("Connected!");
 
@@ -190,21 +205,6 @@ const handleConnection = (client) => {
     console.log("Connection lost");
     soundBoard.turnOff();
   });
-};
-
-const processRightWall = () => {
-  rightWall.reset();
-  rightWall.updateLEDs(pointsTree);
-};
-
-const processBackWall = () => {
-  backWall.reset();
-  backWall.updateLEDs(pointsTree, metronome.getBar());
-};
-
-const processLeftWall = () => {
-  leftWall.reset();
-  leftWall.updateLEDs(pointsTree);
 };
 
 const init = () => {
