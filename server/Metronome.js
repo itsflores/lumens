@@ -1,5 +1,6 @@
-const BAR_LEN = 789;
-const SECTION_LEN = 12624; // BAR_LEN x 16
+const BEAT_LEN = 395;
+const BAR_LEN = 790;
+const SECTION_LEN = 12640; // BAR_LEN x 16
 
 class Metronome {
   _beat;
@@ -25,16 +26,16 @@ class Metronome {
     }
   }
 
+  onBeatChange(callback = () => {}) {
+    setInterval(callback, BEAT_LEN);
+  }
+
   onBarChange(callback = () => {}) {
-    setInterval(() => {
-      callback();
-    }, BAR_LEN);
+    setInterval(callback, BAR_LEN);
   }
 
   onSectionChange(callback = () => {}) {
-    setInterval(() => {
-      callback();
-    }, SECTION_LEN);
+    setInterval(callback, SECTION_LEN);
   }
 }
 

@@ -9,22 +9,11 @@ class Light {
   _z;
   _led;
   _radius;
+  _next;
 
   treePosition;
-  soundUpdate;
 
-  instrument;
-
-  constructor(
-    x,
-    y,
-    z,
-    led,
-    soundUpdate,
-    instrument,
-    maxDepth = false,
-    radius = LIGHT_RADIUS
-  ) {
+  constructor(x, y, z, led, maxDepth = false, radius = LIGHT_RADIUS) {
     this._on = false;
     this._x = x;
     this._y = y;
@@ -39,8 +28,7 @@ class Light {
       maxZ: maxDepth ? 2999 : z + radius,
     };
     this._led = led;
-    this.soundUpdate = soundUpdate;
-    this.instrument = instrument;
+    this._next = false;
   }
 
   setRadius(radius) {

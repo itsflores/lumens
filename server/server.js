@@ -6,6 +6,8 @@ const Light = require("./Light");
 const LEDGrid = require("./LEDGrid");
 const SoundBoard = require("./SoundBoard");
 const Metronome = require("./Metronome");
+const InstrumentGrid = require("./InstrumentGrid");
+const InstrumentLight = require("./InstrumentLight");
 
 const PORT = 8081;
 const board = new five.Board({ port: "/dev/cu.usbmodem11401" });
@@ -100,12 +102,12 @@ const populateRightWall = () => {
         };
       }
 
-      const newLight = new Light(
+      const newLight = new InstrumentLight(
         xPos,
         yPos,
         zPos,
-        LEDStrip.pixel(stripPosition + 100),
-        // LEDStrip.pixel(stripPosition),
+        // LEDStrip.pixel(stripPosition + 100),
+        LEDStrip.pixel(stripPosition),
         soundFunction,
         synth
       );
@@ -119,7 +121,7 @@ const populateRightWall = () => {
     lights.push(lightsRow);
   }
 
-  rightWall = new LEDGrid(lights, "sound");
+  rightWall = new InstrumentGrid(lights);
 };
 
 const populateBackWall = () => {
@@ -167,7 +169,7 @@ const populateBackWall = () => {
 };
 
 const processRightWall = () => {
-  rightWall.reset();
+  // rightWall.reset();
   rightWall.updateLEDs(pointsTree);
 };
 
@@ -197,6 +199,10 @@ const handleConnection = (client) => {
     pointsTree.clear();
     pointsTree.load(positionData);
 
+    rightWall.updateLEDs(pointsTree);
+
+    LEDStrip.show();
+
     // console.log(positionData);
     // console.log("data length: ", positionData.length);
   });
@@ -225,21 +231,30 @@ const init = () => {
       LEDStrip = strip;
 
       populateRightWall();
-      populateBackWall();
+      // populateBackWall();
       // populateLeftWall();
 
       strip.show();
 
       soundBoard.playSection();
 
+      metronome.onBeatChange(() => {
+        
+        // LEDStrip.show();
+      });
+      
       metronome.onBarChange(() => {
         if (metronome.getBeat() === 1) {
+          rightWall.tickLEDs();
           soundBoard.playSection();
         }
+        
+        // processRightWall();
+        // processBackWall();
 
-        processRightWall();
-        processBackWall();
-        LEDStrip.show();
+        // rightWall.updateLEDs(pointsTree);
+
+        // LEDStrip.show();
 
         metronome.updateTime();
       });

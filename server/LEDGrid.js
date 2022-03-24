@@ -9,13 +9,11 @@ class LEDGrid {
   _lights;
   _width;
   _height;
-  _type; // sound | volume - for music
 
-  constructor(lights, type = "lights") {
+  constructor(lights) {
     this._lights = lights;
     this._height = lights.length;
     this._width = lights[0].length;
-    this._type = type;
   }
 
   reset() {
