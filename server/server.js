@@ -182,10 +182,6 @@ const handleConnection = (client) => {
     pointsTree.clear();
     pointsTree.load(positionData);
 
-    // processRightWall();
-    // processLeftWall();
-    // processBackWall();
-
     // console.log(positionData);
     // console.log("data length: ", positionData.length);
   });
@@ -234,12 +230,7 @@ const init = () => {
 
       strip.show();
 
-      // metronome.init();
-
       soundBoard.playSection();
-
-      // metronome.onSectionChange(() => {
-      // });
 
       metronome.onBarChange(() => {
         if (metronome.getBeat() === 1) {
