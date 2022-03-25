@@ -230,8 +230,7 @@ const init = () => {
       // populateBackWall();
       // populateLeftWall();
 
-      strip.show();
-
+      LEDStrip.show();
       soundBoard.playSection();
       
       metronome.onBarChange(() => {
