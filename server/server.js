@@ -108,7 +108,7 @@ const populateRightWall = () => {
         zPos,
         // LEDStrip.pixel(stripPosition + 100),
         LEDStrip.pixel(stripPosition),
-        soundFunction,
+        soundFunction
       );
 
       lightsRow.push(newLight);
@@ -149,7 +149,7 @@ const populateBackWall = () => {
         xPos,
         yPos,
         zPos,
-        LEDStrip.pixel(stripPosition),
+        LEDStrip.pixel(stripPosition)
       );
 
       lightsRow.push(newLight);
@@ -232,8 +232,8 @@ const init = () => {
 
       LEDStrip.show();
       soundBoard.playSection();
-      
-      metronome.onBarChange(() => {
+
+      metronome.onBeatChange(() => {
         if (metronome.getBeat() === 1) {
           rightWall.tickLEDs();
           soundBoard.playSection();
