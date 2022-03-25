@@ -13,7 +13,7 @@ class Light {
 
   treePosition;
 
-  constructor(x, y, z, led, maxDepth = false, radius = LIGHT_RADIUS) {
+  constructor(x, y, z, led, radius = LIGHT_RADIUS) {
     this._on = false;
     this._x = x;
     this._y = y;
@@ -22,10 +22,10 @@ class Light {
     this.treePosition = {
       minX: x - radius,
       minY: y - radius,
-      minZ: maxDepth ? 1 : z - radius,
+      minZ: 1,
       maxX: x + radius,
       maxY: y + radius,
-      maxZ: maxDepth ? 2999 : z + radius,
+      maxZ: 2999,
     };
     this._led = led;
     this._next = false;

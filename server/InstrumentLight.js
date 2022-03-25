@@ -14,18 +14,7 @@ class InstrumentLight {
   treePosition;
   soundUpdate;
 
-  instrument;
-
-  constructor(
-    x,
-    y,
-    z,
-    led,
-    soundUpdate,
-    instrument,
-    maxDepth = false,
-    radius = LIGHT_RADIUS
-  ) {
+  constructor(x, y, z, led, soundUpdate, radius = LIGHT_RADIUS) {
     this._on = false;
     this._x = x;
     this._y = y;
@@ -34,15 +23,14 @@ class InstrumentLight {
     this.treePosition = {
       minX: x - radius,
       minY: y - radius,
-      minZ: maxDepth ? 1 : z - radius,
+      minZ: z - radius,
       maxX: x + radius,
       maxY: y + radius,
-      maxZ: maxDepth ? 2999 : z + radius,
+      maxZ: z + radius,
     };
     this._led = led;
     this._next = false;
     this.soundUpdate = soundUpdate;
-    this.instrument = instrument;
   }
 
   setRadius(radius) {
