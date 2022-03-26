@@ -1,7 +1,7 @@
-const BEAT_LEN = 790;
+// const BEAT_LEN = 790;
 
 // DIFFERENCE
-// const BEAT_LEN = 375;
+const BEAT_LEN = 375;
 // const BAR_LEN = 6000;
 
 class Metronome {

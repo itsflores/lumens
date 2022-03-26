@@ -8,44 +8,15 @@ board.on("ready", () => {
     board,
     contoller: "FIRMATA",
     strips: [
-      { pin: 3, length: 50 },  
+      { pin: 3, length: 100 },
+      { pin: 7, length: 50 },
       // { pin: 7, length: 50 },
-      // { pin: 2, length: 50 },
     ],
     gamma: 2.8,
   });
 
-  // const strip2 = pixel.Strip({
-  //   board,
-  //   contoller: "FIRMATA",
-  //   strips: [{ pin: 7, length: 50 }],
-  //   gamma: 2.8,
-  // });
-
   strip.on("ready", () => {
-    // for (let i = 0; i < 100; i++) {
-    //   if (i < 60) {
-    //     strip.pixel(i).color("#0057b7");
-    //   } else {
-    //     strip.pixel(i).color("#ffd700");
-    //   }
-    // }
-
-    // for (let i = 0; i < 100; i++) {
-    //   if (i < 80) {
-    //     strip.pixel(i).color("#FFF");
-    //   }
-    // }
-
-    // for (let i = 0; i < 100; i++) {
-    //   if (i < 100) {
-    //     strip.pixel(i).color("#FF0000");
-    //   } else {
-    //     strip.pixel(i).color("#00FF00");
-    //   }
-    // }
-
-    // strip.color("#0000FF");
+    // strip.color("#FFFFFF");
     // strip.color("#FF0000");
     // strip.color("#FFFF00");
     // strip.pixel(2).off();
@@ -55,9 +26,4 @@ board.on("ready", () => {
     // strip.show();
     strip.off();
   });
-
-  // strip2.on("ready", () => {
-  //   strip2.color("#0000FF");
-  //   strip2.show();
-  // })
 });

@@ -39,7 +39,6 @@ class Light {
     if (this.isOff()) {
       this._led.color(color);
       this._on = true;
-      this.soundUpdate();
     }
   }
 

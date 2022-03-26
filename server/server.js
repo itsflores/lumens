@@ -18,7 +18,7 @@ const wss = new WebSocketServer({
 const pointsTree = new RBush3D.RBush3D();
 const metronome = new Metronome();
 const soundBoard = new SoundBoard();
-const { synth } = soundBoard.instruments;
+const { chords, melody, bass, effects, drums } = soundBoard.instruments;
 
 let leftWall = null;
 let rightWall = null;
@@ -90,15 +90,33 @@ const populateRightWall = () => {
 
       let soundFunction = () => {};
 
-      if (col === 4) {
+      if (col === 0) {
         soundFunction = () => {
-          synth.setVariant(row);
+          drums.setVariant(row);
+        };
+      }
+
+      if (col === 1) {
+        soundFunction = () => {
+          effects.setVariant(row);
+        };
+      }
+
+      if (col === 2) {
+        soundFunction = () => {
+          bass.setVariant(row);
         };
       }
 
       if (col === 3) {
         soundFunction = () => {
-          synth.setVolume(row);
+          chords.setVariant(row);
+        };
+      }
+
+      if (col === 4) {
+        soundFunction = () => {
+          melody.setVariant(row);
         };
       }
 
@@ -106,8 +124,8 @@ const populateRightWall = () => {
         xPos,
         yPos,
         zPos,
-        // LEDStrip.pixel(stripPosition + 100),
-        LEDStrip.pixel(stripPosition),
+        LEDStrip.pixel(stripPosition + 100),
+        // LEDStrip.pixel(stripPosition),
         soundFunction
       );
 
@@ -217,7 +235,7 @@ const init = () => {
       strips: [
         { pin: 3, length: 100 },
         { pin: 7, length: 50 },
-        { pin: 2, length: 50 },
+        // { pin: 2, length: 50 },
       ],
       gamma: 2.8,
     });
@@ -227,7 +245,7 @@ const init = () => {
       LEDStrip = strip;
 
       populateRightWall();
-      // populateBackWall();
+      populateBackWall();
       // populateLeftWall();
 
       LEDStrip.show();
@@ -238,6 +256,8 @@ const init = () => {
           rightWall.tickLEDs();
           soundBoard.playSection();
         }
+
+        processBackWall();
 
         metronome.updateTime();
       });

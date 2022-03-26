@@ -12,12 +12,20 @@ class SoundBoard {
   constructor() {
     this._on = false;
     this.instruments = {
-      synth: new Instrument("synth", playAudio),
+      bass: new Instrument("bass", playAudio),
+      chords: new Instrument("chords", playAudio),
+      drums: new Instrument("drums", playAudio),
+      effects: new Instrument("effects", playAudio),
+      melody: new Instrument("melody", playAudio),
     };
   }
 
   useInstruments() {
-    this.instruments.synth.play();
+    this.instruments.bass.play();
+    this.instruments.chords.play();
+    this.instruments.drums.play();
+    this.instruments.effects.play();
+    this.instruments.melody.play();
   }
 
   turnOn() {

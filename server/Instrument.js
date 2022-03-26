@@ -16,7 +16,7 @@ class Instrument {
   constructor(name, playFunction) {
     this._playFunction = playFunction;
     this._variant = 1;
-    this._volume = VOL_1;
+    this._volume = VOL_3;
     this._name = name;
     this._file = synthFile(this._name, this._variant);
   }
