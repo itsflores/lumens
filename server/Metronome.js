@@ -1,8 +1,6 @@
-// const BEAT_LEN = 790;
-
-// DIFFERENCE
+// The Difference by Flume
 const BEAT_LEN = 375;
-// const BAR_LEN = 6000;
+const BAR_LEN = 6000;
 
 class Metronome {
   _beat;
