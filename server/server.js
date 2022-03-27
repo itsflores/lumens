@@ -2,12 +2,12 @@ const five = require("johnny-five");
 const pixel = require("node-pixel");
 const RBush3D = require("rbush-3d");
 const WebSocketServer = require("ws").Server;
-const Light = require("./Light");
-const LEDGrid = require("./LEDGrid");
-const SoundBoard = require("./SoundBoard");
-const Metronome = require("./Metronome");
-const InstrumentGrid = require("./InstrumentGrid");
-const InstrumentLight = require("./InstrumentLight");
+const Light = require("./classes/Light");
+const LEDGrid = require("./classes/LEDGrid");
+const SoundBoard = require("./classes/SoundBoard");
+const Metronome = require("./classes/Metronome");
+const InstrumentGrid = require("./classes/InstrumentGrid");
+const InstrumentLight = require("./classes/InstrumentLight");
 
 const PORT = 8081;
 const board = new five.Board({ port: "/dev/cu.usbmodem11401" });
@@ -47,11 +47,45 @@ const populateLeftWall = () => {
         ? 2 * col + 10 * row
         : 10 * (row + 1) - 2 * (col + 1);
 
-      const newLight = new Light(
+      let soundFunction = () => {};
+
+      if (col === 0) {
+        soundFunction = () => {
+          drums.setVolume(row);
+        };
+      }
+
+      if (col === 1) {
+        soundFunction = () => {
+          effects.setVolume(row);
+        };
+      }
+
+      if (col === 2) {
+        soundFunction = () => {
+          bass.setVolume(row);
+        };
+      }
+
+      if (col === 3) {
+        soundFunction = () => {
+          chords.setVolume(row);
+        };
+      }
+
+      if (col === 4) {
+        soundFunction = () => {
+          melody.setVolume(row);
+        };
+      }
+
+      const newLight = new InstrumentLight(
         xPos,
         yPos,
         zPos,
-        LEDStrip.pixel(stripPosition + 150)
+        LEDStrip.pixel(stripPosition + 150),
+        // LEDStrip.pixel(stripPosition),
+        soundFunction
       );
 
       lightsRow.push(newLight);
@@ -63,7 +97,7 @@ const populateLeftWall = () => {
     lights.push(lightsRow);
   }
 
-  leftWall = new LEDGrid(lights);
+  leftWall = new InstrumentGrid(lights);
 };
 
 const populateRightWall = () => {
@@ -182,19 +216,9 @@ const populateBackWall = () => {
   backWall = new LEDGrid(lights);
 };
 
-const processRightWall = () => {
-  // rightWall.reset();
-  rightWall.updateLEDs(pointsTree);
-};
-
 const processBackWall = () => {
   backWall.reset();
   backWall.updateLEDs(pointsTree, metronome.getBar());
-};
-
-const processLeftWall = () => {
-  leftWall.reset();
-  leftWall.updateLEDs(pointsTree);
 };
 
 const handleConnection = (client) => {
@@ -214,6 +238,7 @@ const handleConnection = (client) => {
     pointsTree.load(positionData);
 
     rightWall.updateLEDs(pointsTree);
+    leftWall.updateLEDs(pointsTree);
 
     LEDStrip.show();
 
@@ -254,6 +279,7 @@ const init = () => {
       metronome.onBeatChange(() => {
         if (metronome.getBeat() === 1) {
           rightWall.tickLEDs();
+          // leftWall.tickLEDs();
           soundBoard.playSection();
         }
 
