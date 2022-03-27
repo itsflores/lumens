@@ -10,7 +10,7 @@ const InstrumentGrid = require("./classes/InstrumentGrid");
 const InstrumentLight = require("./classes/InstrumentLight");
 
 const PORT = 8081;
-const board = new five.Board({ port: "/dev/cu.usbmodem11401" });
+const board = new five.Board({ port: "/dev/cu.usbmodem1401" });
 const wss = new WebSocketServer({
   port: PORT,
 });
@@ -258,9 +258,9 @@ const init = () => {
       board,
       contoller: "FIRMATA",
       strips: [
-        { pin: 3, length: 100 },
+        { pin: 2, length: 100 },
+        { pin: 3, length: 50 },
         { pin: 7, length: 50 },
-        // { pin: 2, length: 50 },
       ],
       gamma: 2.8,
     });
@@ -271,7 +271,7 @@ const init = () => {
 
       populateRightWall();
       populateBackWall();
-      // populateLeftWall();
+      populateLeftWall();
 
       LEDStrip.show();
       soundBoard.playSection();
@@ -279,7 +279,7 @@ const init = () => {
       metronome.onBeatChange(() => {
         if (metronome.getBeat() === 1) {
           rightWall.tickLEDs();
-          // leftWall.tickLEDs();
+          leftWall.tickLEDs();
           soundBoard.playSection();
         }
 
