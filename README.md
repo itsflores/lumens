@@ -41,6 +41,9 @@ This project is mainly split into four different sections which are
 - [johnny-five](https://github.com/rwaldron/johnny-five)
 - [node-pixel](https://github.com/ajfisher/node-pixel)
 
+**Important**
+To use node-pixel on an M1 machine, I had to install `firmata` separately and then force the installation of `node-pixel`
+
 ### LEDs
 - 4x 50 Rextin® WS2811 Pixels Digital Addressable LED String Lights (5V)
 
@@ -49,7 +52,4 @@ This project is mainly split into four different sections which are
 This idea began with a visit to the Immersive Van Gogh experience in Toronto and the thought of creating a real experience in real life outside of pixels in a computer which is what most of my undergrad degree has been about. The works of [Breakfast Studio New York](https://breakfastny.com/) and [Karyn Nakamura](https://karynnakamura.com/) were also a great source of inspiration.
 
 ## Thank you
-A thank you to all my friends who helped me out getting through this project by believing in me and what I wanted to accomlish. Special thanks to Joyce, Derek, and Paulina for dealing with me while building this installation.
-
-**Important**
-To use node-pixel on an M1 machine, I had to install `firmata` separately and then force the installation of `node-pixel`
+A thank you to all my friends who helped me out getting through this project by believing in me and what I wanted to accomplish. Special thanks to Joyce, Derek, and Paulina for dealing with me while building this installation.
