@@ -52,4 +52,4 @@ To use node-pixel on an M1 machine, I had to install `firmata` separately and th
 This idea began with a visit to the Immersive Van Gogh experience in Toronto and the thought of creating a real experience in real life outside of pixels in a computer which is what most of my undergrad degree has been about. The works of [Breakfast Studio New York](https://breakfastny.com/) and [Karyn Nakamura](https://karynnakamura.com/) were also a great source of inspiration.
 
 ## Thank you
-A thank you to all my friends who helped me out getting through this project by believing in me and what I wanted to accomplish. Special thanks to Joyce, Derek, and Paulina for dealing with me while building this installation.
+A thank you to all my friends who helped me out getting through this project by believing in me and what I wanted to accomplish. Special thanks to Joyce and Derek for being at times a second brain in this project and finding tools I could not know where to even start digging.
