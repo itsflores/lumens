@@ -267,7 +267,7 @@ const init = () => {
 
     strip.on("ready", () => {
       LEDStrip = strip;
-      
+
       LEDStrip.off();
 
       populateRightWall();
