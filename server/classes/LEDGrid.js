@@ -1,8 +1,15 @@
+// const LightColors = {
+//   1: "#FFFFFF",
+//   2: "#FFFF00",
+//   3: "#64e764",
+//   4: "#4465c6",
+// };
+
 const LightColors = {
   1: "#FFFFFF",
-  2: "#FFFF00",
-  3: "#64e764",
-  4: "#4465c6",
+  2: "#FFFFFF",
+  3: "#FFFFFF",
+  4: "#FFFFFF",
 };
 
 class LEDGrid {
