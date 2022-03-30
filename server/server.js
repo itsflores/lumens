@@ -5,7 +5,6 @@ const WebSocketServer = require("ws").Server;
 const Light = require("./classes/Light");
 const LEDGrid = require("./classes/LEDGrid");
 const SoundBoard = require("./classes/SoundBoard");
-const Metronome = require("./classes/Metronome");
 const InstrumentGrid = require("./classes/InstrumentGrid");
 const InstrumentLight = require("./classes/InstrumentLight");
 
@@ -16,8 +15,8 @@ const wss = new WebSocketServer({
 });
 
 const pointsTree = new RBush3D.RBush3D();
-const metronome = new Metronome();
 const soundBoard = new SoundBoard();
+const { metronome } = soundBoard;
 const { chords, melody, bass, effects, drums } = soundBoard.instruments;
 
 let leftWall = null;

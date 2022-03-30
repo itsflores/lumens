@@ -1,5 +1,6 @@
 const player = require("sound-play");
 const Instrument = require("./Instrument");
+const Metronome = require("./Metronome");
 
 const playAudio = (audioPath, volume) => {
   player.play(audioPath, volume);
@@ -7,6 +8,7 @@ const playAudio = (audioPath, volume) => {
 
 class SoundBoard {
   instruments;
+  metronome;
   _on;
 
   constructor() {
@@ -18,6 +20,7 @@ class SoundBoard {
       effects: new Instrument("effects", playAudio),
       melody: new Instrument("melody", playAudio),
     };
+    this.metronome = new Metronome();
   }
 
   useInstruments() {
