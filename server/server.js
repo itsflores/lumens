@@ -24,10 +24,12 @@ let rightWall = null;
 let backWall = null;
 let LEDStrip = null;
 
+const SIDE_Z_ORIGIN = 1400;
+
 const populateLeftWall = () => {
   const lights = [];
 
-  const Z_ORIGIN = 1500;
+  const Z_ORIGIN = SIDE_Z_ORIGIN;
   const Z_DELTA = 150;
   const Y_DELTA = 150;
 
@@ -102,7 +104,7 @@ const populateLeftWall = () => {
 const populateRightWall = () => {
   const lights = [];
 
-  const Z_ORIGIN = 1500;
+  const Z_ORIGIN = SIDE_Z_ORIGIN;
   const Z_DELTA = 150;
   const Y_DELTA = 150;
 
