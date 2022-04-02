@@ -27,6 +27,8 @@ void ofApp::setup(){
 //    glPointSize(1);
     glEnable(GL_POINT_SMOOTH);
     
+    ofBackground(0, 0, 0);
+    
     // sockets
     HTTPClientSession cs("localhost",8081);
     HTTPRequest request(HTTPRequest::HTTP_GET, "/?encoding=text",HTTPMessage::HTTP_1_1);
