@@ -8,7 +8,6 @@
 #include <Poco/Net/HTTPMessage.h>
 #include <Poco/Net/WebSocket.h>
 #include <Poco/Net/HTTPClientSession.h>
-#include <vector>
 
 class ofApp : public ofBaseApp{
 
