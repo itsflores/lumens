@@ -190,7 +190,6 @@ void ofApp::sendCloud() {
     std::string pointString = "";
     std::stringstream pointStream;
     
-    // Creates vector of "x:y:z" strings
     if (pointCloud.hasVertices()) {
         for (ofVec3f point : pointCloud.getVertices()) {
             int xInt = static_cast<int>(point.x);
