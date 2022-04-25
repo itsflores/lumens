@@ -9,6 +9,10 @@
 ## What is it?
 lumière exagéré is a visual representation of sound and movement. Additionally, it is being accounted for my honours project in the Bachelor's Degree of Computer Science at Carleton University.
 
+[<img src="./assets/thumbnail.png" width="75%">](https://www.youtube.com/watch?v=yNsTve8e0Zg "Lumiere")
+
+[Video demonstration of its display at KOSMIC 2022](https://www.youtube.com/watch?v=yNsTve8e0Zg)
+
 ## How does it work?
 <img width="600" src="./assets/diagram.png">
 
